@@ -1,6 +1,5 @@
 
 # Balloon Telemetry
-example:  https://github.com/projecthorus/sondehub-amateur-tracker
 
 A Python script to process Amateur Radio balloon data from [WSPR Live](https://wspr.live/)  and upload it to multiple sites where it can be tracked on [SondeHub](https://amateur.sondehub.org/) and [APRS.fi](https://aprs.fi/) web sites.
 
@@ -35,11 +34,11 @@ If you wish to assist with development, please contact me prior to making a Pull
 
 Requirements: Java
 
-    $ git clone https://github.com/projecthorus/sondehub-amateur-tracker.git
+    $ git clone https://github.com/k5map/BalloonTelemetry 
     $ pip install urllib3
     $ pip install requests
     $ pip install maidenhead
 
 ## Original developer
 
-Author: Mike Pate - K5MAP
+Author: Mike Pate - K5MAP, [email](mailto:k5map@arrl.net?subject=[GitHub]BalloonTracker)
