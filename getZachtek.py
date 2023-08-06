@@ -23,7 +23,7 @@
 #
 # if not already installled, use pip to install the following
 #
-#    pip install urllib
+#    pip install urllib3
 #    pip install pprint
 #
 #==============================================================================================================#

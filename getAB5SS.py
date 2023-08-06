@@ -75,39 +75,27 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
 
     aDateTime = []
     aMatch = []
-    for i in range(len(jWSPRRec1)):
+    for i in range(0, len(jWSPRRec1)):
         try:
             aDateTime.index(jWSPRRec1[i]['time'])
         except ValueError:
             aDateTime.append(jWSPRRec1[i]['time'])
             sDateTime = adjDateTime(jWSPRRec1[i]['time'])           # find 2nd record time based on 1st record
             match = False
-            for j in range(len(jWSPRRec2)):
-                if jWSPRRec2[j]['time'] == sDateTime:
+            for j, element in enumerate(jWSPRRec2):
+            #for j in range(len(jWSPRRec2)):
+                if element['time'] == sDateTime:
                     match = True
                     break
             # process both records
             if match == True:
                 aMatch.append(jWSPRRec1[i])
                 aMatch.append(jWSPRRec2[j])
-                logging.info(f" Found 1st record to process = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
-                logging.info(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec1[j]['band']}")
+                logging.debug(f" Found 1st record to process = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
+                logging.debug(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec1[j]['band']}")
             else:
-                logging.info(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
+                logging.debug(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
     return aMatch
-
-
-#--------------------------------------------------------------------------------------------------------------#
-def delDupRecords(jData):
-    # remove duplicae records in JSON structure
-    jTemp = {}
-    for i in range(len(jData)):
-        result = next((item for item in jTemp if item["tx_band"] == jData[i]["band"] and item["tx_loc"] == jData[i]["tx_loc"]), None)
-        if result == None:
-            jTemp.append(jData[i])
-
-    print(f"Lenght of jTemp = {len(jTemp)}")
-    return jTemp
 
 
 #--------------------------------------------------------------------------------------------------------------#
@@ -126,7 +114,7 @@ def delDupRecords(jData):
 #
 #   Sat status -
 #
-def decodeCallsign(Packet1, Packet2):
+def decodeRecords(Packet1, Packet2):
     # use both packets to decode telemetry data
     PowerTable = {
         0: {'alt1' : 0, 'alt2' : 0},
@@ -149,12 +137,13 @@ def decodeCallsign(Packet1, Packet2):
         57: {'alt1' : 17000, 'alt2' : 0},
         60: {'alt1' : 18000, 'alt2' : 0},
     }
-    Callsign1 = "AB5SS"
-    sGrid = "EL29"
-    Callsign2 = "1Z2RKO"
-    Band = 20
-    Power1 = 43
-    Power2 = 10
+
+    Callsign1 = Packet1['tx_sign']
+    sGrid = Packet1['tx_loc']
+    Callsign2 = Packet2['tx_sign']
+    Band = Packet1['band']
+    Power1 = Packet1['power']
+    Power2 = Packet2['power']
     
     # maidenhead grid = EL29KO
     Grid = sGrid + Callsign2[-2:].lower()
@@ -184,16 +173,22 @@ def decodeCallsign(Packet1, Packet2):
     else:
         Temp = (int((x - ord(Sat)) / 3) * 5) - 30
 
-    logging.info(f" Telemetry data:  channel = {Channel}, Grid = {Grid}, Speed = {Speed}, Altitude(m) = {Altitude}, Sat = {Sat}, Temp(c) = {Temp}")
+    logging.debug(f" Telemetry data:  callsign1 = {Packet1['tx_sign']}, callsign2 = {Packet2['tx_sign']}, time = {Packet1['time']}, " +
+                  f"channel = {Channel}, Grid = {Grid}, Sat = {Sat}, Speed = {Speed}, Alt(m) = {Altitude}, Temp(c) = {Temp}")
 
     TelemetryData = {
+        "callsign1" : Packet1['tx_sign'],
+        "callsign2" : Packet2['tx_sign'],
+        "time" : Packet1['time'],
         "channel" : Channel,
         "grid" : Grid,
+        "sat" : Sat,
         "speed" : Speed,
         "altitude" : Altitude,
-        "sat" : Sat,
         "temp" : Temp
     }
+
+    print(TelemetryData)
 
     return TelemetryData
 
@@ -272,8 +267,6 @@ def getAB5SS(bCfg, last_date):
     logging.info("#" + ("-"*130))
     logging.info(" Function AB5SS start" )
 
-    #nCallsign = convertCallsign(bCfg)
-
     query = "SELECT * FROM rx WHERE tx_sign='" + wCallsign + "' AND time > '" + last_date + "' ORDER BY time"
     #query = "SELECT * FROM rx WHERE tx_sign='" + wCallsign + "' AND time > '2022-10-21 00:00:00' AND time < '2022-10-22 00:00:00' ORDER BY time"
 
@@ -286,16 +279,16 @@ def getAB5SS(bCfg, last_date):
         contents = urllib.request.urlopen(url).read()
     except urllib.error.URLError as erru:
         logging.critical(f" URL error - {erru.reason}" )
-        return -1, None
+        return -1, None, None
     except urllib.error.HTTPError as errh:
         logging.critical(f" HTTP error - {errh}" )
-        return -1, None
+        return -1, None, None
     except socket.timeout as errt:
         logging.critical(f" Connection timeout - {errt}" )
-        return -1, None
+        return -1, None, None
     except:
         logging.critical(f" Unexpected error calling URL - {traceback.format_exc()}" )
-        return -1, None
+        return -1, None, None
 
     # check on how many rows returned
     jWsprData = json.loads(contents.decode("UTF-8"))["data"]
@@ -303,7 +296,7 @@ def getAB5SS(bCfg, last_date):
     logging.info(f" WSPR Live records downloaded = {record_count}" )
     if record_count < 1:
         logging.warning(" Exit function, insufficient WSPR records to process" )
-        return 0, None
+        return 0, None, None
 
     pprint.pp(jWsprData)
     #delDupRecords(jWsprData)
@@ -324,31 +317,33 @@ def getAB5SS(bCfg, last_date):
         contents = urllib.request.urlopen(url).read()
     except urllib.error.URLError as erru:
         logging.critical(f" URL error - {erru.reason}" )
-        return -1, None
+        return -1, None, None
     except urllib.error.HTTPError as errh:
         logging.critical(f" HTTP error - {errh}" )
-        return -1, None
+        return -1, None, None
     except socket.timeout as errt:
         logging.critical(f" Connection timeout - {errt}" )
-        return -1, None
+        return -1, None, None
     except:
         logging.critical(f" Unexpected error calling URL - {traceback.format_exc()}" )
-        return -1, None
+        return -1, None, None
 
     jWsprData2 = json.loads(contents.decode("UTF-8"))["data"]
     record_count = len(jWsprData2)
     logging.info(f" WSPR Live records downloaded = {record_count}" )
     if record_count < 1:
         logging.warning(" Exit function, insufficient matching WSPR records to process" )
-        return 0, None
+        return 0, None, None
 
     pprint.pp(jWsprData2)
 
     # process records downloaded and match
     aMatch = matchAB5SSRecords(jWsprData, jWsprData2)
-    # !!!!!! add code to determine if matches found
-    print("="*40)
-    pprint.pp(aMatch)
+    logging.info(f" Number of matched records = {len(aMatch)}" )
+    if len(aMatch) < 2:
+        # no matches to process
+        logging.warning(f" Insuficient number of records to process" )
+        return 0, None, None
 
     # dump data to file
     print("="*40)
@@ -356,18 +351,32 @@ def getAB5SS(bCfg, last_date):
     jDump = {}
     for index, element in enumerate(aMatch):
         jDump[index] = element
-
     print("="*40)
     pprint.pp(jDump)
-
+    print(f"jDump record count = {len(jDump)}")
     json_object = json.dumps(jDump, indent=4)
     with open("AB5SS-dump.json", "w") as outfile:
         outfile.write(json_object)
 
     # decode records
-    # !!!!!!
+    jDecodedRecs = {}
+    for i in range(0, len(aMatch), 2):
+        result = decodeRecords(aMatch[i], aMatch[i+1])
+        jDecodedRecs[i] = result
+        # put data into jUploadData format for uploading
+        #JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : uCallsign, "time_received" : datetime1,
+            #"payload_callsign" : bCallsign, "datetime" : datetime2, "lat" : lat, "lon" : lon, "alt" : altitude, "grid" : jWsprData[y]['tx_loc'], "comment" : strComment}
 
-    return 0
+    logging.info(f" Number of records after decoding = {len(jDecodedRecs)}" )
+
+    # create data file for John
+    # !!!!!!!!!!!!!!!!!!!!!!!!!
+
+    # capture last datetime
+    # !!!!!!!!!!!!!
+
+    #return 1, jUploadData, (ldatetime)
+    return 0, None, None
 
 
 """
@@ -380,4 +389,17 @@ for p_id, p_info in people.items():
     
     for key in p_info:
         print(key + ':', p_info[key])
+
+#--------------------------------------------------------------------------------------------------------------#
+def delDupRecords(jData):
+    # remove duplicae records in JSON structure
+    jTemp = {}
+    for i in range(len(jData)):
+        result = next((item for item in jTemp if item["tx_band"] == jData[i]["band"] and item["tx_loc"] == jData[i]["tx_loc"]), None)
+        if result == None:
+            jTemp.append(jData[i])
+
+    print(f"Lenght of jTemp = {len(jTemp)}")
+    return jTemp
+
 """

@@ -119,10 +119,10 @@ match tracker:
     case "A":
         #  AB5SS tracker selected
         logging.info(f" Tracker selected = {tracker} (AB5SS pico)" )
-        rCode = getAB5SS(BalloonCfg, strLastTime)
+        rCode, jUploadData, lastDateTime = getAB5SS(BalloonCfg, strLastTime)
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )
-        rCode = 0
+        rCode = 0           #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     case "Q":
         #  QRP-Labs tracker selected

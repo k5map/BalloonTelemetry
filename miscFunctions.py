@@ -23,7 +23,7 @@
 #
 # if not already installled, use pip to install the following
 #
-#    pip install aprslib
+#    pip install aprslib3
 #    pip install maidenhead
 #
 #==============================================================================================================#
