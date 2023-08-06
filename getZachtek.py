@@ -44,7 +44,7 @@ from miscFunctions import *
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchRecords(aDateTime, index):
+def matchZachtekRecords(aDateTime, index):
     # determine if 2nd record avilable to process
     
     # add 2 minutes to found record datetime
@@ -111,7 +111,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
         try:
             aDateTime.index(jWsprData[i]['time'])
         except ValueError:
-            rCode = matchRecords(jWsprData, i)
+            rCode = matchZachtekRecords(jWsprData, i)
             if rCode != -1:
                 aDateTime.append(jWsprData[i]['time'])
                 aMatch.append(i)

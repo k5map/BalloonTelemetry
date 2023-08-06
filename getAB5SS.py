@@ -46,7 +46,6 @@ from miscFunctions import *
 def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
     # determine if 2nd record avilable to process
     logging.info(f" Starting record matching process")
-    aResults = []
 
     print(f"jWSPRRec1 len = {len(jWSPRRec1)}")
     print(f"jWSPRRec2 len = {len(jWSPRRec2)}")
@@ -65,15 +64,50 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
     >>>
 
     next((item for item in dicts if item.get("name") and item["name"] == "Pam"), None)
-    """
+
     for i in range(len(jWSPRRec1)):
         if next((item for item in aResults if item['time'] == jWSPRRec1[i]['time']), False) == False:
             aResults.append(jWSPRRec1[i])
 
     print(f"aResults = {aResults}")
     print(f"aResults len = {len(aResults)}")
+    """
 
-    return 
+    aDateTime = []
+    aMatch = []
+    for i in range(len(jWSPRRec1)):
+        try:
+            aDateTime.index(jWSPRRec1[i]['time'])
+        except ValueError:
+            aDateTime.append(jWSPRRec1[i]['time'])
+            sDateTime = adjDateTime(jWSPRRec1[i]['time'])           # find 2nd record time based on 1st record
+            match = False
+            for j in range(len(jWSPRRec2)):
+                if jWSPRRec2[j]['time'] == sDateTime:
+                    match = True
+                    break
+            # process both records
+            if match == True:
+                aMatch.append(jWSPRRec1[i])
+                aMatch.append(jWSPRRec2[j])
+                logging.info(f" Found 1st record to process = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
+                logging.info(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec1[j]['band']}")
+            else:
+                logging.info(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
+    return aMatch
+
+
+#--------------------------------------------------------------------------------------------------------------#
+def delDupRecords(jData):
+    # remove duplicae records in JSON structure
+    jTemp = {}
+    for i in range(len(jData)):
+        result = next((item for item in jTemp if item["tx_band"] == jData[i]["band"] and item["tx_loc"] == jData[i]["tx_loc"]), None)
+        if result == None:
+            jTemp.append(jData[i])
+
+    print(f"Lenght of jTemp = {len(jTemp)}")
+    return jTemp
 
 
 #--------------------------------------------------------------------------------------------------------------#
@@ -123,8 +157,7 @@ def decodeCallsign(Packet1, Packet2):
     Power2 = 10
     
     # maidenhead grid = EL29KO
-    Grid = sGrid + Callsign2[-2:]
-    # ???????????????? should last 2 chars be lower case?
+    Grid = sGrid + Callsign2[-2:].lower()
 
     # channel #
     digit1 = int(Callsign2[0]) * 10
@@ -232,9 +265,7 @@ def convertCallsign(bCfg):
 
 #--------------------------------------------------------------------------------------------------------------#
 def getAB5SS(bCfg, last_date):
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     wCallsign = bCfg['wsprcallsign']
-
     """
     Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
     """
@@ -275,6 +306,7 @@ def getAB5SS(bCfg, last_date):
         return 0, None
 
     pprint.pp(jWsprData)
+    #delDupRecords(jWsprData)
     print("-"*40)
 
     callsign = jWsprData[record_count-1]['tx_sign']
@@ -313,7 +345,39 @@ def getAB5SS(bCfg, last_date):
     pprint.pp(jWsprData2)
 
     # process records downloaded and match
-    matchAB5SSRecords(jWsprData, jWsprData2)
-    d = decodeCallsign("A", "B")
+    aMatch = matchAB5SSRecords(jWsprData, jWsprData2)
+    # !!!!!! add code to determine if matches found
+    print("="*40)
+    pprint.pp(aMatch)
+
+    # dump data to file
+    print("="*40)
+    print(f"aMatch record count = {len(aMatch)}")
+    jDump = {}
+    for index, element in enumerate(aMatch):
+        jDump[index] = element
+
+    print("="*40)
+    pprint.pp(jDump)
+
+    json_object = json.dumps(jDump, indent=4)
+    with open("AB5SS-dump.json", "w") as outfile:
+        outfile.write(json_object)
+
+    # decode records
+    # !!!!!!
 
     return 0
+
+
+"""
+Iterating Through a Nested Dictionary
+people = {1: {'Name': 'John', 'Age': '27', 'Sex': 'Male'},
+          2: {'Name': 'Marie', 'Age': '22', 'Sex': 'Female'}}
+
+for p_id, p_info in people.items():
+    print("\nPerson ID:", p_id)
+    
+    for key in p_info:
+        print(key + ':', p_info[key])
+"""
