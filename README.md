@@ -19,13 +19,13 @@ This script is currently under development and is not ready for use.  The initia
 * Downloads transmitted position data from [WSPR Live](https://wspr.live/) 
 * Matches position data
 * Depending on which tracker is selected, will decode data within position data to obtain telemetry data
-* Uploads processed data to different websites based on INI config file
+* Uploads processed data to different websites based on CFG config file
 * If set in CFG config file, will also output data to flat file
   - Telemetry data saved:  callsign, time, channel, grid, speed, altitude, temp 
 
 ## Contribute
 
-Don't hesitate to report any issues, or suggest improvements. Just visit the [issues page](https://github.com/k5map/BalloonTelemetry/issues).
+Don't hesitate to report any issues, or suggest improvements; just visit the [issues page](https://github.com/k5map/BalloonTelemetry/issues).
 If you wish to assist with development, please contact me prior to making a Pull request.
 
 ## Installation
@@ -39,6 +39,7 @@ Requirements: Python v3.x
 
 ## Planned Enhancements
 
+* Add Solar information to comment & telemetry output
 * Modify logging envirnment to use logging.conf file to allow user to set logging levels & output
 * Calculate speed for Zachtec tracker 
 
