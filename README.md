@@ -17,7 +17,7 @@ This script is currently under development and is not ready for use.  The initia
 * Utilizes a config file to provide details on each balloon
 * Designed to have mulitple instances running using a single CFG config file
 * Downloads transmitted position data from [WSPR Live](https://wspr.live/) 
-* Matches position data
+* Matches 1st and 2nd position data records
 * Depending on which tracker is selected, will decode data within position data to obtain telemetry data
 * Uploads processed data to different websites based on CFG config file
 * If set in CFG config file, will also output data to flat file
@@ -39,7 +39,7 @@ Requirements: Python v3.x
 
 ## Planned Enhancements
 
-* Add Solar information to comment & telemetry output
+* Add Solar information to comment field & telemetry output
 * Modify logging envirnment to use logging.conf file to allow user to set logging levels & output
 * Calculate speed for Zachtec tracker 
 
