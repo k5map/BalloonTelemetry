@@ -144,9 +144,27 @@ def FreqToBand(freq):
 #                                                                                                              #
 #==============================================================================================================#
 def UTCtoEpoch(strDateTime, fCode):
-#    intEpoch = calendar.timegm(time.strptime(strDateTime, '%Y-%m-%d %H:%M:%S'))
+    #intEpoch = calendar.timegm(time.strptime(strDateTime, '%Y-%m-%d %H:%M:%S'))
     intEpoch = calendar.timegm(time.strptime(strDateTime, fCode))
     return intEpoch
+
+
+#==============================================================================================================#
+#                                                                                                              #
+# reformatDateTime(dateTime1, offset)                                                                          #
+# - converts datetime string 'YYYY-MM-DD HH:MM:SS' to Zulu 'YYYY-MM-DDTHH:MM:SSZ                               #
+#                                                                                                              #
+#==============================================================================================================#
+def reformatDateTime(strDateTime, offset):
+    t1 = datetime.datetime.strptime(strDateTime, "%Y-%m-%d %H:%M:%S")
+    if offset > 0:
+        t2 = t1 + datetime.timedelta(seconds=offset)
+    else:
+        t2 = t1
+    #datetime1 = t1.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    #datetime2 = t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    return t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
 
 
 #==============================================================================================================#

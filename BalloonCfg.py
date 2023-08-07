@@ -41,7 +41,6 @@ def getBalloonCfg():
 
 def putBalloonCfg(Balloon, lDateTime):
     # save last datetime to ini
-    """
     cfgFile = "BalloonTelemetry.cfg"
     config_obj = configparser.ConfigParser()
     config_obj.read(cfgFile)
@@ -50,5 +49,4 @@ def putBalloonCfg(Balloon, lDateTime):
     with open(cfgFile, 'w') as configfile:
         config_obj.write(configfile)
     logging.info(' lDateTime has been updated in the config file')
-    """
     return

@@ -34,9 +34,10 @@ import logging
 import traceback
 import urllib.request, urllib.error
 import json
-import time
-import datetime
+#import time
+#import datetime
 import math
+import csv
 from socket import *
 import pprint
 
@@ -49,29 +50,6 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
 
     print(f"jWSPRRec1 len = {len(jWSPRRec1)}")
     print(f"jWSPRRec2 len = {len(jWSPRRec2)}")
-
-    """
-    >>> dicts = [
-        { "name": "Tom", "age": 10 },
-        { "name": "Mark", "age": 5 },
-        { "name": "Pam", "age": 7 },
-        { "name": "Dick", "age": 12 }
-    ]
-    >>> next((item for item in dicts if item["name"] == "Pam"), False)
-    {'name': 'Pam', 'age': 7}
-    >>> next((item for item in dicts if item["name"] == "Sam"), False)
-    False
-    >>>
-
-    next((item for item in dicts if item.get("name") and item["name"] == "Pam"), None)
-
-    for i in range(len(jWSPRRec1)):
-        if next((item for item in aResults if item['time'] == jWSPRRec1[i]['time']), False) == False:
-            aResults.append(jWSPRRec1[i])
-
-    print(f"aResults = {aResults}")
-    print(f"aResults len = {len(aResults)}")
-    """
 
     aDateTime = []
     aMatch = []
@@ -95,6 +73,29 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
                 logging.debug(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec1[j]['band']}")
             else:
                 logging.debug(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
+
+    """
+    >>> dicts = [
+        { "name": "Tom", "age": 10 },
+        { "name": "Mark", "age": 5 },
+        { "name": "Pam", "age": 7 },
+        { "name": "Dick", "age": 12 }
+    ]
+    >>> next((item for item in dicts if item["name"] == "Pam"), False)
+    {'name': 'Pam', 'age': 7}
+    >>> next((item for item in dicts if item["name"] == "Sam"), False)
+    False
+    >>>
+
+    next((item for item in dicts if item.get("name") and item["name"] == "Pam"), None)
+
+    for i in range(len(jWSPRRec1)):
+        if next((item for item in aResults if item['time'] == jWSPRRec1[i]['time']), False) == False:
+            aResults.append(jWSPRRec1[i])
+
+    print(f"aResults = {aResults}")
+    print(f"aResults len = {len(aResults)}")
+    """
     return aMatch
 
 
@@ -188,7 +189,7 @@ def decodeRecords(Packet1, Packet2):
         "temp" : Temp
     }
 
-    print(TelemetryData)
+    #print(TelemetryData)
 
     return TelemetryData
 
@@ -261,6 +262,7 @@ def convertCallsign(bCfg):
 #--------------------------------------------------------------------------------------------------------------#
 def getAB5SS(bCfg, last_date):
     wCallsign = bCfg['wsprcallsign']
+    BalloonCallsign = bCfg['ballooncallsign']
     """
     Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
     """
@@ -298,8 +300,7 @@ def getAB5SS(bCfg, last_date):
         logging.warning(" Exit function, insufficient WSPR records to process" )
         return 0, None, None
 
-    pprint.pp(jWsprData)
-    #delDupRecords(jWsprData)
+    #pprint.pp(jWsprData)
     print("-"*40)
 
     callsign = jWsprData[record_count-1]['tx_sign']
@@ -335,7 +336,7 @@ def getAB5SS(bCfg, last_date):
         logging.warning(" Exit function, insufficient matching WSPR records to process" )
         return 0, None, None
 
-    pprint.pp(jWsprData2)
+    #pprint.pp(jWsprData2)
 
     # process records downloaded and match
     aMatch = matchAB5SSRecords(jWsprData, jWsprData2)
@@ -345,38 +346,58 @@ def getAB5SS(bCfg, last_date):
         logging.warning(f" Insuficient number of records to process" )
         return 0, None, None
 
-    # dump data to file
-    print("="*40)
-    print(f"aMatch record count = {len(aMatch)}")
-    jDump = {}
-    for index, element in enumerate(aMatch):
-        jDump[index] = element
-    print("="*40)
-    pprint.pp(jDump)
-    print(f"jDump record count = {len(jDump)}")
-    json_object = json.dumps(jDump, indent=4)
-    with open("AB5SS-dump.json", "w") as outfile:
-        outfile.write(json_object)
-
     # decode records
-    jDecodedRecs = {}
+    software_name = "k5map-python"
+    software_version = "0.1"
+    jDecodedData = {}
+    jUploadData = []
     for i in range(0, len(aMatch), 2):
-        result = decodeRecords(aMatch[i], aMatch[i+1])
-        jDecodedRecs[i] = result
-        # put data into jUploadData format for uploading
-        #JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : uCallsign, "time_received" : datetime1,
-            #"payload_callsign" : bCallsign, "datetime" : datetime2, "lat" : lat, "lon" : lon, "alt" : altitude, "grid" : jWsprData[y]['tx_loc'], "comment" : strComment}
+        #result = decodeRecords(aMatch[i], aMatch[i+1])
+        jDecodedData[i] = decodeRecords(aMatch[i], aMatch[i+1])
 
-    logging.info(f" Number of records after decoding = {len(jDecodedRecs)}" )
+        # reformat time from WSPR format to Zulu
+        datetime1 = reformatDateTime(aMatch[i]['time'], 0)
+        datetime2 = reformatDateTime(aMatch[i]['time'], 10)
+
+        # add telemetry data
+        # build strComment  channel, Sats?, voltage?, alt(m), 0C?, grid, callsign2, callsign1, comment
+        strComment = str(jDecodedData[i]['channel']) + " Sats (voltage) " + str(jDecodedData[i]['altitude']) + "m OC " + jDecodedData[i]['grid'] + " " + jDecodedData[i]['callsign2']
+        strComment += " " + jDecodedData[i]['callsign1'] + " " + bCfg['comment']
+
+        # put data into jUploadData format for uploading
+        JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : bCfg['uploadcallsign'], "time_received" : datetime1,
+            "payload_callsign" : BalloonCallsign, "datetime" : datetime2, "lat" : aMatch[i]['tx_lat'], "lon" : aMatch[i]['tx_lon'], "alt" : jDecodedData[i]['altitude'], 
+            "grid" : jDecodedData[i]['grid'], "comment" : strComment}
+        jUploadData.append(JSON)
+
+
+    logging.info(f" Number of records after decoding = {len(jDecodedData)}" )
+    pprint.pp(jUploadData, indent=2)
+    logging.info(f" Number of records ready for upload = {len(jUploadData)}" )
 
     # create data file for John
     # !!!!!!!!!!!!!!!!!!!!!!!!!
+    if bCfg['telemetryfile'] == 'Y':
+        """
+        jDump = {}
+        for index, element in enumerate(aMatch):
+            jDump[index] = element
+        print("="*40)
+        pprint.pp(jDump)
+        print(f"jDump record count = {len(jDump)}")
+        json_object = json.dumps(jDump, indent=4)
+        with open("AB5SS-dump.json", "w") as outfile:
+            outfile.write(json_object)
+        """
+        pprint.pp(jDecodedData, indent=2)
+        outputFilename = BalloonCallsign + ".txt"
+        with open(outputFilename, 'w') as file:
+            csv_file = csv.writer(file)
+            csv_file.writerow(jDecodedData[0].keys())     # write header from keys
+            for item in jDecodedData:
+                csv_file.writerow(jDecodedData[item].values())
 
-    # capture last datetime
-    # !!!!!!!!!!!!!
-
-    #return 1, jUploadData, (ldatetime)
-    return 0, None, None
+    return 1, jUploadData, aMatch[i]['time']
 
 
 """

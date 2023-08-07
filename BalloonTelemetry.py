@@ -80,7 +80,7 @@ timeslot = int(BalloonCfg['timeslot'])
 tracker = BalloonCfg['tracker']
 strComment = BalloonCfg['comment']
 UploadSite = BalloonCfg['uploadsite']
-#LogType = BalloonCfg['logging']
+TelemetryFile = BalloonCfg['telemetryfile']
 lDateTime = BalloonCfg['ldatetime']
 
 #------------------- verify user var ------------------------------#
@@ -120,7 +120,6 @@ match tracker:
         rCode, jUploadData, lastDateTime = getAB5SS(BalloonCfg, strLastTime)
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )
-        rCode = 0           #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     case "Q":
         #  QRP-Labs tracker selected
@@ -150,7 +149,6 @@ if rCode == 1:
     match UploadSite:
         case "S":
             # SondeHub
-            #pprint.pp(dSondeData, indent=2)
             result = putSondeHub(jUploadData)
             if result == -1 :     # some sort of exception occured, check log
                 sys.exit( 1 )
@@ -158,13 +156,13 @@ if rCode == 1:
         case "A":
             # APRS-IS
             result = putAprsIS(jUploadData)
-            #result = 0
             if result == -1 :     # some sort of exception occured, check log
                 sys.exit( 1 )
 
-        case "N":
+        case "T":
             # Do not upload - this option for testing
-            result = 0
+            logging.info(f" NOTE: No upload attempted, CFG indicates testing only" )
+            rCode = 0
 
         case _:
             #  Invalid Upload Site selected

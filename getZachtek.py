@@ -35,8 +35,8 @@ import logging
 import traceback
 import urllib.request, urllib.error
 import json
-import time
-import datetime
+#import time
+#import datetime
 from socket import *
 #import pprint
 
@@ -141,18 +141,20 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
         pos = GridtoLatLon(jWsprData[y]['tx_loc'])              # use Grid from 2nd packet
         lat = round(pos[0],3)
         lon = round(pos[1],3)
+
         # calc altitude from power
         # reference https://github.com/HarrydeBug/WSPR-transmitters/blob/master/Standard%20Firmware/Release/Hardware_Version_2_ESP8285/WSPR-TX2.05/WSPR-TX2.05.ino line 1430
         alt1 = int(jWsprData[x]['power']) * 300
         #alt2 = int(jWsprData[i+1]['power']) * 300
         altitude = alt1
+
         ##logging.info(" Altitude: meters = " + str(altitude) + ", feet = " + str(round(altitude*3.28084)))
         logging.info(f" DateTime: {jWsprData[y]['time']}, Grid: {jWsprData[y]['tx_loc']}, Lat: {lat}, Lon: {lon}, Alt: {altitude}m {round(altitude*3.28084)}ft, x-y {x} {y}")
-        # reformat time from WSPR record
-        t1 = datetime.datetime.strptime(jWsprData[y]['time'], "%Y-%m-%d %H:%M:%S")
-        t2 = t1 + datetime.timedelta(seconds=10)
-        datetime1 = t1.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-        datetime2 = t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
+        # reformat time from WSPR format to Zulu
+        datetime1 = reformatDateTime(jWsprData[y]['time'], 0)
+        datetime2 = reformatDateTime(jWsprData[y]['time'], 10)
+
         # assemble json for upload to SondeHub
         JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : uCallsign, "time_received" : datetime1,
             "payload_callsign" : bCallsign, "datetime" : datetime2, "lat" : lat, "lon" : lon, "alt" : altitude, "grid" : jWsprData[y]['tx_loc'], "comment" : strComment}

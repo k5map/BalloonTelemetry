@@ -70,6 +70,7 @@ def putAprsIS(BalloonCallsign, jUploadData):
     alt = f'{alt_ft:06}'
 
     # build comment field
+    # case statement for tracker value to determine how to build comment  !!!!!!!!!!!!!!!!!!!!
     comments = f" {jUploadData['alt']} {Callsign} {jUploadData['grid']} {BalloonCallsign} {jUploadData['comment']}"
 
     # build packet string
@@ -77,7 +78,7 @@ def putAprsIS(BalloonCallsign, jUploadData):
     packet += ztime + lat + "/" + lon
     packet += "O000/000/A=" + alt + comments
 
-    logging.warning(f" packet = {packet}")        #!!!!!!!! change to debug
+    logging.debug(f" packet = {packet}")
 
     try:
         x = aprslib.parse(packet)
@@ -88,7 +89,7 @@ def putAprsIS(BalloonCallsign, jUploadData):
         logging.critical(f" ***** Unknown Parsing Error - {traceback.format_exc()}" )
         return -1
 
-    logging.warning(f" Parse response: \n {x}" )      #!!!!!!!!!!!  change to debug
+    logging.debug(f" Parse response: \n {x}" )
 
     AIS = aprslib.IS(uCallsign, passCode, port=14580)
     try:
@@ -103,12 +104,11 @@ def putAprsIS(BalloonCallsign, jUploadData):
         logging.exception(f" ***** Unknown Connect Error - {traceback.format_exc()}" )
         return -1
 
-    #response = AIS.sendall(packet)
+    response = AIS.sendall(packet)
     #aprslib.ConnectionError !!!!!!
     response = ""
     if response != "None":
         logging.critical(f" ***** Sendall Error - {response}" )
-
     
     return 0
 
