@@ -1,8 +1,10 @@
 __pycache__
 *.bak
+*.csv
 *.json
-*.log
+*.log*
 *.pyc
+*.txt
 .vscode
 test*.py
 getLastPosition.py
