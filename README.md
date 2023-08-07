@@ -21,6 +21,7 @@ This script is currently under development and is not ready for use.  The initia
 * Depending on which tracker is selected, will decode data within position data to obtain telemetry data
 * Uploads processed data to different websites based on INI config file
 * If set in CFG config file, will also output data to flat file
+  _ Telemetry data saved:  callsign, time, channel, grid, speed, altitude, temp 
 
 ## Contribute
 
@@ -39,7 +40,7 @@ Requirements: Python v3.x
 ## Planned Enhancements
 
 * Modify logging envirnment to use logging.conf file to allow user to set logging levels & output
-* Calculate speed of Zachtec tracker 
+* Calculate speed for Zachtec tracker 
 
 ## Original developer
 
