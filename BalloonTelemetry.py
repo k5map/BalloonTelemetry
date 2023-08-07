@@ -42,7 +42,7 @@ from BalloonCfg import *
 from getZachtek import *
 from getAB5SS import *
 from putSondeHub import *
-#from putAprsIS import *
+from putAprsIS import *
 from miscFunctions import *
 
 
@@ -50,7 +50,7 @@ pVersion = "0.1"
 #------------------------ starts here -----------------------------#
 BalloonCfg = getBalloonCfg()
 logFile = BalloonCfg['ballooncallsign'] + ".log"
-print("*** INI ***")
+print("*** CFG ***")
 pprint.pp(BalloonCfg)
 
 #------------------------ configure logging -----------------------------#
@@ -68,10 +68,6 @@ if sys.version_info[0] > 3 :
 else :
     logging.info(' Cleared to continue')
 
-SiteCfg = getSysVar()
-UploadSite = SiteCfg['uploadsite']
-LogType = SiteCfg['logging']
-
 logging.info(f" Loaded these values for balloon {BalloonCfg['ballooncallsign']}" )
 for k, v in BalloonCfg.items():
     # print (k, v)
@@ -83,6 +79,8 @@ strBalloonCallSign = BalloonCfg['ballooncallsign']
 timeslot = int(BalloonCfg['timeslot'])
 tracker = BalloonCfg['tracker']
 strComment = BalloonCfg['comment']
+UploadSite = BalloonCfg['uploadsite']
+#LogType = BalloonCfg['logging']
 lDateTime = BalloonCfg['ldatetime']
 
 #------------------- verify user var ------------------------------#
@@ -159,10 +157,14 @@ if rCode == 1:
 
         case "A":
             # APRS-IS
-            #result = putAprsIS(???)
-            result = 0
+            result = putAprsIS(jUploadData)
+            #result = 0
             if result == -1 :     # some sort of exception occured, check log
                 sys.exit( 1 )
+
+        case "N":
+            # Do not upload - this option for testing
+            result = 0
 
         case _:
             #  Invalid Upload Site selected

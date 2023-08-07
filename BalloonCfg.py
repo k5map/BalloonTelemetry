@@ -39,23 +39,6 @@ def getBalloonCfg():
 
 #==============================================================================================================#
 
-def getSysVar():
-    # save last datetime to ini
-    cfgFile = "BalloonTelemetry.cfg"
-    config_object = configparser.ConfigParser()
-    file = open(cfgFile, "r")
-    config_object.read_file(file)
-    output_dict = dict()
-    sections = config_object.sections()
-    for section in sections:
-        items = config_object.items(section)
-        output_dict[section] = dict(items)
-
-    return output_dict['SYSTEM']
-
-
-#==============================================================================================================#
-
 def putBalloonCfg(Balloon, lDateTime):
     # save last datetime to ini
     """
