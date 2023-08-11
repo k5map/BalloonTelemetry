@@ -39,11 +39,11 @@ import json
 import pprint
 
 from BalloonCfg import *
+from SolarPos import *
 from getZachtek import *
 from getAB5SS import *
 from putSondeHub import *
 from putAprsIS import *
-#from SolarPos import *
 from miscFunctions import *
 
 

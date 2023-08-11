@@ -15,7 +15,7 @@
 
 import math
 
-def SunPos(when, location, refraction):
+def SunPosition(when, location, refraction):
     # Extract the passed data
     year, month, day, hour, minute, second, timezone = when
     latitude, longitude = location
@@ -96,7 +96,7 @@ def into_range(x, range_min, range_max):
     delta = range_max - range_min
     return (((shiftedx % delta) + delta) % delta) + range_min
 
-
+"""
 if __name__ == "__main__":
     # Close Encounters latitude, longitude
     location = (40.602778, -104.741667)
@@ -120,3 +120,4 @@ if __name__ == "__main__":
     # Where:  (40.602778, -104.741667)
     # Azimuth:  121.38
     # Elevation:  61.91
+"""

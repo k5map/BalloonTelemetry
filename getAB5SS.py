@@ -41,6 +41,7 @@ import csv
 from socket import *
 import pprint
 
+from SolarPos import *
 from miscFunctions import *
 
 #--------------------------------------------------------------------------------------------------------------#
@@ -174,8 +175,17 @@ def decodeRecords(Packet1, Packet2):
     else:
         Temp = (int((x - ord(Sat)) / 3) * 5) - 30
 
+    # Get the Sun's apparent location in the sky
+    location = ( Packet1['tx_lat'], Packet1['tx_lon'] )
+    date_time = datetime.datetime.strptime(Packet1['time'], "%Y-%m-%d %H:%M:%S")
+    #when = (2022, 7, 4, 11, 20, 0, 0)
+    when = (date_time.year, date_time.month, date_time.day, date_time.hour, date_time.minute, date_time.second, 0)
+    #print(when)
+    azimuth, elevation = SunPosition(when, location, True)
+    #print(f"azimuth = {azimuth}, elevation = {elevation}")
+
     logging.debug(f" Telemetry data:  callsign1 = {Packet1['tx_sign']}, callsign2 = {Packet2['tx_sign']}, time = {Packet1['time']}, " +
-                  f"channel = {Channel}, Grid = {Grid}, Sat = {Sat}, Speed = {Speed}, Alt(m) = {Altitude}, Temp(c) = {Temp}")
+                  f"channel = {Channel}, Grid = {Grid}, Sat = {Sat}, Speed = {Speed}, Alt(m) = {Altitude}, Temp(c) = {Temp}, azimuth = {azimuth}, elevation = {elevation}")
 
     TelemetryData = {
         "callsign1" : Packet1['tx_sign'],
@@ -186,7 +196,9 @@ def decodeRecords(Packet1, Packet2):
         "sat" : Sat,
         "speed" : Speed,
         "altitude" : Altitude,
-        "temp" : Temp
+        "temp" : Temp,
+        "azimuth" : azimuth,
+        "elevation" : elevation
     }
 
     #print(TelemetryData)
@@ -352,7 +364,6 @@ def getAB5SS(bCfg, last_date):
     jDecodedData = {}
     jUploadData = []
     for i in range(0, len(aMatch), 2):
-        #result = decodeRecords(aMatch[i], aMatch[i+1])
         jDecodedData[i] = decodeRecords(aMatch[i], aMatch[i+1])
 
         # reformat time from WSPR format to Zulu
