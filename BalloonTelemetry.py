@@ -39,15 +39,14 @@ import json
 import pprint
 
 from BalloonCfg import *
-from SolarPos import *
 from getZachtek import *
 from getAB5SS import *
 from putSondeHub import *
 from putAprsIS import *
 from miscFunctions import *
+from version import __version__
 
 
-pVersion = "0.2"
 #------------------------ starts here -----------------------------#
 BalloonCfg = getBalloonCfg()
 logFile = BalloonCfg['ballooncallsign'] + ".log"
@@ -60,7 +59,7 @@ logging.basicConfig(filename = logFile,
                     format = '%(asctime)s - %(levelname)-8s :%(message)s',
                     datefmt = '%Y-%m-%d %H:%M:%S',
                     filemode = 'w')
-logging.info(f" Program version {pVersion}")
+logging.info(f" Program version {__version__}")
 logging.info("#" + ("-"*130))
 
 if sys.version_info[0] > 3 :

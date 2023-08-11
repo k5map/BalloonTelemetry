@@ -41,6 +41,7 @@ from socket import *
 #import pprint
 
 from miscFunctions import *
+from version import __version__
 
 #--------------------------------------------------------------------------------------------------------------#
 
@@ -130,7 +131,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
 
     # found at least 1 set matched, assemble json for upload
     software_name = "k5map-python"
-    software_version = "0.1"
+    software_version = "0.2.0"
     
     jUploadData = []
     for i in range(0, len(aMatch), 2):
@@ -156,7 +157,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
         datetime2 = reformatDateTime(jWsprData[y]['time'], 10)
 
         # assemble json for upload to SondeHub
-        JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : uCallsign, "time_received" : datetime1,
+        JSON = {"software_name" : software_name, "software_version" : __version__, "uploader_callsign" : uCallsign, "time_received" : datetime1,
             "payload_callsign" : bCallsign, "datetime" : datetime2, "lat" : lat, "lon" : lon, "alt" : altitude, "grid" : jWsprData[y]['tx_loc'], "comment" : strComment}
         jUploadData.append(JSON)
 

@@ -83,8 +83,9 @@ def putAprsIS(wCallsign, jUploadData):
     #packet += "102345z" + lat + "/" + "09532.31W"
     packet += "O000/000/A=" + alt + comments
 
-    logging.debug(f" packet = {packet}")
+    logging.info(f" packet = {packet}")
 
+    # send packet through parser for validation
     try:
         x = aprslib.parse(packet)
     except (aprslib.ParseError, aprslib.UnknownFormat) as err:
@@ -94,7 +95,6 @@ def putAprsIS(wCallsign, jUploadData):
         logging.critical(f" ***** Unknown Parsing Error - {traceback.format_exc()}" )
         return -1
 
-    logging.debug(f" Parse response: \n {x}" )
 
     AIS = aprslib.IS(uCallsign, passCode, port=14580)
     try:

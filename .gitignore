@@ -9,3 +9,4 @@ __pycache__
 test*.py
 getLastPosition.py
 getWsprLive.py
+version.py

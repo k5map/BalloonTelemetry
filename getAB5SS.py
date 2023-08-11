@@ -360,7 +360,7 @@ def getAB5SS(bCfg, last_date):
 
     # decode records
     software_name = "k5map-python"
-    software_version = "0.1"
+    software_version = "0.2"
     jDecodedData = {}
     jUploadData = []
     for i in range(0, len(aMatch), 2):

@@ -34,7 +34,7 @@ def getBalloonCfg():
         items = config_object.items(section)
         output_dict[section] = dict(items)
 
-    return output_dict[args.bCallSign]
+    return output_dict[args.bCallSign.upper()]
 
 
 #==============================================================================================================#

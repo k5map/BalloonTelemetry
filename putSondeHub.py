@@ -30,9 +30,9 @@
 
 import logging
 import traceback
-#import json
 import requests
 #import pprint
+
 
 #--------------------------------------------------------------------------------------------------------------#
 
@@ -49,8 +49,7 @@ def putSondeHub(aSondeData):
 
     #------------ upload new position data to SondeHub -----------------------------#
     try:
-        #!!!!!!!!response = requests.put('https://api.v2.sondehub.org/amateur/telemetry', headers=headers, json=aSondeData)
-        x = 0
+        response = requests.put('https://api.v2.sondehub.org/amateur/telemetry', headers=headers, json=aSondeData)
     except requests.exceptions.HTTPError as errh:
         logging.critical(f" Http Error: {errh}")
         return -1
@@ -67,11 +66,10 @@ def putSondeHub(aSondeData):
         logging.exception(f" ***** Unknown Connect Error - {traceback.format_exc()}" )
         return -1
 
-    #print("Response string = ", response)
     #print("Response code = ", response.status_code)         # 200 = data accepted and saved; 500 = data not accepted
     logging.info(f" Number of records uploaded to SondeData = {len(aSondeData)}")
 
-    return 
+    return 0
 
 """
 import requests
