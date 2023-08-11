@@ -88,7 +88,9 @@ def deg_to_dms(deg, type='lat'):
         'lon': ('E','W')
     }
     compass_str = compass[type][0 if d >= 0 else 1]
-    return f'{abs(d)}{abs(m):02}.{abs(s):02.0f}{compass_str}'
+    dStr = f"{abs(d):02}" if type == 'lat' else f"{abs(d):03}"
+    return f'{dStr}{abs(m):02}.{abs(s):02.0f}{compass_str}'
+    #return f'{abs(d):05}{abs(m):02}.{abs(s):02.0f}{compass_str}'
 
 
 #==============================================================================================================#

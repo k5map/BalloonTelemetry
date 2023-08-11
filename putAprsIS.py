@@ -33,7 +33,7 @@
 #       APRS Telemetry - http://www.aprs.net/vm/DOS/TELEMTRY.HTM 
 #       APRS symbols - http://www.aprs.net/vm/DOS/SYMBOLS.HTM (balloon is the letter O)
 #       http://www.aprs.org/APRS-docs/PROTOCOL.TXT
-#       K5WH-117>APRS,TCPIP*,qAS,W5MOM:/302315z3038.46N/13142.29EO000/000/A=056105 17100 K5WH-117 PM50up (bCallsign) BVARC Brazos Valley ARC Field Day, STX BLT 1163
+#       K5WH-117>APRS,TCPIP*,qAS,W5MOM:/302315z3038.46N/13142.29EO000/000/A=056105 17100 K5WH-117 PM50up BVARC Brazos Valley ARC Field Day, STX BLT 1163
 #       lat/lon - decimal to radian     https://github.com/ampledata/aprs/blob/master/aprs/decimaldegrees.py
 #       time = 121234z  (12th day at 1234 military time)
 #==============================================================================================================#
@@ -48,34 +48,39 @@ import math
 from miscFunctions import *
 
 
-def putAprsIS(BalloonCallsign, jUploadData):
+def putAprsIS(wCallsign, jUploadData):
     logging.info("#" + ("-"*130))
     logging.info(" Function putAprsIS start" )
 
-    Callsign = jUploadData['payload_callsign']
-    uCallsign = jUploadData['uploader_callsign']
+    #pprint.pp(jUploadData)
+
+    i = len(jUploadData) - 1
+
+    bCallsign = jUploadData[i]['payload_callsign']
+    uCallsign = jUploadData[i]['uploader_callsign']
     passCode = getPassCode(uCallsign)
 
     # build raw_timestamp 
-    t1 = datetime.datetime.strptime(jUploadData['time_received'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    t1 = datetime.datetime.strptime(jUploadData[i]['time_received'], "%Y-%m-%dT%H:%M:%S.%fZ")
     ztime = t1.strftime("%d%H%Mz")
 
 
     # lat / lon
-    lat = deg_to_dms(jUploadData['lat'], 'lat')
-    lon = deg_to_dms(jUploadData['lon'], 'lon')
+    lat = deg_to_dms(jUploadData[i]['lat'], 'lat')
+    lon = deg_to_dms(jUploadData[i]['lon'], 'lon')
 
     # calc atitude (feet)
-    alt_ft = round(jUploadData['alt'] * 3.281)
+    alt_ft = round(jUploadData[i]['alt'] * 3.281)
     alt = f'{alt_ft:06}'
 
     # build comment field
     # case statement for tracker value to determine how to build comment  !!!!!!!!!!!!!!!!!!!!
-    comments = f" {jUploadData['alt']} {Callsign} {jUploadData['grid']} {BalloonCallsign} {jUploadData['comment']}"
+    comments = f" {jUploadData[i]['alt']} {wCallsign} {jUploadData[i]['grid']} {jUploadData[i]['comment']}"
 
     # build packet string
-    packet = Callsign + ">APRS,TCPIP*,qAS," + uCallsign + ":/"
+    packet = bCallsign + ">APRS,TCPIP*,qAS," + uCallsign + ":/"
     packet += ztime + lat + "/" + lon
+    #packet += "102345z" + lat + "/" + "09532.31W"
     packet += "O000/000/A=" + alt + comments
 
     logging.debug(f" packet = {packet}")
@@ -95,10 +100,10 @@ def putAprsIS(BalloonCallsign, jUploadData):
     try:
         AIS.connect()
     except (aprslib.ConnectionError, aprslib.ConnectionDrop) as errc:
-        logging.critical(f" ***** Parsing Error - {errc}" )
+        logging.critical(f" ***** Parsing Error - {errc} {errc.message}" )
         return -1
     except aprslib.LoginError as errl:
-        logging.critical(f" ***** Login Error - {errl}" )
+        logging.critical(f" ***** Login Error - {errl} {errl.message}" )
         return -1
     except:
         logging.exception(f" ***** Unknown Connect Error - {traceback.format_exc()}" )
@@ -106,13 +111,13 @@ def putAprsIS(BalloonCallsign, jUploadData):
 
     response = AIS.sendall(packet)
     #aprslib.ConnectionError !!!!!!
-    response = ""
-    if response != "None":
-        logging.critical(f" ***** Sendall Error - {response}" )
+    #response = ""
+    #if response != "None":
+        #logging.critical(f" ***** Sendall Error - {response}" )
     
     return 0
 
-
+"""
 if __name__ == "__main__":
     jUploadData = {
 	'software_name': 'k5map-python', 
@@ -129,3 +134,4 @@ if __name__ == "__main__":
 	} 
     BalloonCallsign = "K5WH/B"
     putAprsIS(BalloonCallsign, jUploadData)
+"""

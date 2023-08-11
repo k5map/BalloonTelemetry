@@ -43,10 +43,11 @@ from getZachtek import *
 from getAB5SS import *
 from putSondeHub import *
 from putAprsIS import *
+#from SolarPos import *
 from miscFunctions import *
 
 
-pVersion = "0.1"
+pVersion = "0.2"
 #------------------------ starts here -----------------------------#
 BalloonCfg = getBalloonCfg()
 logFile = BalloonCfg['ballooncallsign'] + ".log"
@@ -155,7 +156,7 @@ if rCode == 1:
 
         case "A":
             # APRS-IS
-            result = putAprsIS(jUploadData)
+            result = putAprsIS(strWsprCallSign, jUploadData)
             if result == -1 :     # some sort of exception occured, check log
                 sys.exit( 1 )
 
