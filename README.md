@@ -8,7 +8,7 @@ This script is currently under development and is not ready for use.  The initia
 ## Balloon Trackers Supported
 
 * Zachtek
-* AB5SS pico - currently under development
+* AB5SS pico
 * QRP-Labs LightAPRS-W - future release
 * QRP-Labs U4B - future release
 
@@ -21,7 +21,7 @@ This script is currently under development and is not ready for use.  The initia
 * Depending on which tracker is selected, will decode data within position data to obtain telemetry data
 * Uploads processed data to different websites based on CFG config file
 * If set in CFG config file, will also output data to flat file
-  - Telemetry data saved:  callsign, time, channel, grid, speed, altitude, temp 
+  - Telemetry data saved:  callsign, time, channel, grid, speed, altitude, temp, sun azimuth, sun elevation
 
 ## Contribute
 
@@ -37,12 +37,16 @@ Requirements: Python v3.x
     $ pip install requests
     $ pip install maidenhead
 
+## Testing
+
+Within the CFG file, set the value of uploadsite = T.  This will process all of the data, prepare it for uploading but not acutally
+upload any data. This way you get a full run and can view the log file for any errors.
+
 ## Planned Enhancements
 
-* Add Solar information to comment field & telemetry output
 * Modify logging envirnment to use logging.conf file to allow user to set logging levels & output
 * Calculate speed for Zachtec tracker 
 
 ## Original developer
 
-Author: Mike Pate - K5MAP, [email](mailto:k5map@arrl.net?subject=[GitHub]BalloonTracker)
+Author: Mike Pate ([email](mailto:k5map@arrl.net?subject=[GitHub]BalloonTracker)) - K5MAP

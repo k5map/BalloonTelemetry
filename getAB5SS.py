@@ -433,4 +433,19 @@ def delDupRecords(jData):
     print(f"Lenght of jTemp = {len(jTemp)}")
     return jTemp
 
+#--------------------------------------------------------------------------------------------------------------#
+
+names = ['Bruce', 'Clark', 'Peter']
+heros = ['Batman', 'Superman', 'Spiderman']
+my_dict = {}
+for name, value in zip(names, heros):
+    mydict[name] = value
+print mydict
+
+OR
+
+my_dict = {name: hero for name, hero in zip(names, heros)}
+my_dict = {name: hero for name, hero in zip(names, heros) if name != 'Peter'}
+print my_dict
+
 """
