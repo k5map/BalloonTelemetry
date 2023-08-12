@@ -22,7 +22,7 @@ import argparse
 def getBalloonCfg():
     cfgFile = "BalloonTelemetry.cfg"
     parser = argparse.ArgumentParser()
-    parser.add_argument("bCallSign", help="Enter Balloon Callsign")
+    parser.add_argument("bCallSign", help="Enter Balloon Callsign with SSID")
     args = parser.parse_args()
 
     config_object = configparser.ConfigParser()

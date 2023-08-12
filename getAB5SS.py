@@ -43,6 +43,7 @@ import pprint
 
 from SolarPos import *
 from miscFunctions import *
+from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
@@ -359,8 +360,6 @@ def getAB5SS(bCfg, last_date):
         return 0, None, None
 
     # decode records
-    software_name = "k5map-python"
-    software_version = "0.2"
     jDecodedData = {}
     jUploadData = []
     for i in range(0, len(aMatch), 2):
@@ -376,7 +375,7 @@ def getAB5SS(bCfg, last_date):
         strComment += " " + jDecodedData[i]['callsign1'] + " " + bCfg['comment']
 
         # put data into jUploadData format for uploading
-        JSON = {"software_name" : software_name, "software_version" : software_version, "uploader_callsign" : bCfg['uploadcallsign'], "time_received" : datetime1,
+        JSON = {"software_name" : SOFTWARE_NAME, "software_version" : __version__, "uploader_callsign" : bCfg['uploadcallsign'], "time_received" : datetime1,
             "payload_callsign" : BalloonCallsign, "datetime" : datetime2, "lat" : aMatch[i]['tx_lat'], "lon" : aMatch[i]['tx_lon'], "alt" : jDecodedData[i]['altitude'], 
             "grid" : jDecodedData[i]['grid'], "comment" : strComment}
         jUploadData.append(JSON)

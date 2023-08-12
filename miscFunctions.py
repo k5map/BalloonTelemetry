@@ -90,7 +90,6 @@ def deg_to_dms(deg, type='lat'):
     compass_str = compass[type][0 if d >= 0 else 1]
     dStr = f"{abs(d):02}" if type == 'lat' else f"{abs(d):03}"
     return f'{dStr}{abs(m):02}.{abs(s):02.0f}{compass_str}'
-    #return f'{abs(d):05}{abs(m):02}.{abs(s):02.0f}{compass_str}'
 
 
 #==============================================================================================================#
@@ -164,7 +163,6 @@ def reformatDateTime(strDateTime, offset):
     else:
         t2 = t1
     #datetime1 = t1.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-    #datetime2 = t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     return t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
@@ -202,9 +200,10 @@ def VerifyCallsign(strCallSign):
         return False
     
 
-
+"""
 if __name__ == "__main__":
     #logging.info("Current Log Level : {}\n".format(logging.getLevel()))
     sDateTime = '2023-08-02 23:58:00'
     x = adjDateTime(sDateTime)
     print(f" sDateTime = {sDateTime}, adjDateTime = {x}")
+"""

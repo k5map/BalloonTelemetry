@@ -44,13 +44,13 @@ from getAB5SS import *
 from putSondeHub import *
 from putAprsIS import *
 from miscFunctions import *
-from version import __version__
+from constants import __version__
 
 
 #------------------------ starts here -----------------------------#
 BalloonCfg = getBalloonCfg()
 logFile = BalloonCfg['ballooncallsign'] + ".log"
-print("*** CFG ***")
+print(f"*** {BalloonCfg['ballooncallsign']} CFG ***")
 pprint.pp(BalloonCfg)
 
 #------------------------ configure logging -----------------------------#
@@ -125,7 +125,7 @@ match tracker:
         #  QRP-Labs tracker selected
         logging.info(f" Tracker selected = {tracker} (QRP-Labs)" )
         # call function
-        rCode = 0
+        rCode = 0       #!!!!!!!!!!!!!!!!!!!!!!!!!!
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )
 
@@ -133,7 +133,7 @@ match tracker:
         #  U4B tracker selected
         logging.info(f" Tracker selected = {tracker} (U4B)" )
         # call function
-        rCode = 0
+        rCode = 0       #!!!!!!!!!!!!!!!!!!!!!!!!!!
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )
 
