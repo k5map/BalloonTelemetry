@@ -36,6 +36,8 @@ Requirements: Python v3.x
     $ pip install urllib3
     $ pip install requests
     $ pip install maidenhead
+    $ pip install configupdater
+
 
 ## Testing
 

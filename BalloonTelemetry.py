@@ -51,7 +51,7 @@ from constants import __version__
 BalloonCfg = getBalloonCfg()
 logFile = BalloonCfg['ballooncallsign'] + ".log"
 print(f"*** {BalloonCfg['ballooncallsign']} CFG ***")
-pprint.pp(BalloonCfg)
+pprint.pp(BalloonCfg, indent=2)
 
 #------------------------ configure logging -----------------------------#
 logging.basicConfig(filename = logFile,
@@ -73,6 +73,7 @@ for k, v in BalloonCfg.items():
     # print (k, v)
     logging.info(f" \t- {k} = {v}" )
 
+checkCfg(BalloonCfg)
 strUploadCallSign = BalloonCfg['uploadcallsign']
 strWsprCallSign = BalloonCfg['wsprcallsign']
 strBalloonCallSign = BalloonCfg['ballooncallsign']
@@ -83,7 +84,7 @@ UploadSite = BalloonCfg['uploadsite']
 TelemetryFile = BalloonCfg['telemetryfile']
 lDateTime = BalloonCfg['ldatetime']
 
-#------------------- verify user var ------------------------------#
+#------------------- verify callsign vars ------------------------------#
 if VerifyCallsign(strUploadCallSign) != True :
     logging.error(f" Callsign {strUploadCallSign} is NOT valid" )
     sys.exit( "Invalid callsign specified" )

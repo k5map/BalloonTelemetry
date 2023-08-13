@@ -12,11 +12,18 @@
 #                                                                                                              #
 # Reference https://www.pythonforbeginners.com/basics/convert-ini-file-to-dictionary-in-python                 #
 #==============================================================================================================#
+#
+# if not already installled, use pip to install the following
+#
+#    pip install configupdater
+#
+#==============================================================================================================#
 
+import sys
 import logging
 import configparser
 import argparse
-#from configupdater import ConfigUpdater
+from configupdater import ConfigUpdater
 
 
 def getBalloonCfg():
@@ -36,6 +43,38 @@ def getBalloonCfg():
 
     return output_dict[args.bCallSign.upper()]
 
+
+#==============================================================================================================#
+
+def checkCfg(bCallsign):
+    if 'uploadcallsign' not in bCallsign.keys():
+        logging.error(f" *** Item 'uploadcallsign' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'wsprcallsign' not in bCallsign.keys():
+        logging.error(f" *** Item 'wsprcallsign' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'ballooncallsign' not in bCallsign.keys():
+        logging.error(f" *** Item 'ballooncallsign' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'timeslot' not in bCallsign.keys():
+        logging.error(f" *** Item 'timeslot' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'tracker' not in bCallsign.keys():
+        logging.error(f" *** Item 'tracker' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'comment' not in bCallsign.keys():
+        logging.error(f" *** Item 'comment' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'uploadsite' not in bCallsign.keys():
+        logging.error(f" *** Item 'uploadsite' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'telemetryfile' not in bCallsign.keys():
+        logging.error(f" *** Item 'telemetryfile' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if 'ldatetime' not in bCallsign.keys():
+        logging.error(f" *** Item 'ldatetime' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    return
 
 #==============================================================================================================#
 
