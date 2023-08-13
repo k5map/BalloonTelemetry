@@ -21,28 +21,23 @@
 
 import sys
 import logging
-import configparser
 import argparse
 from configupdater import ConfigUpdater
+import configparser
+
+from constants import CFG_FILE
 
 
 def getBalloonCfg():
-    cfgFile = "BalloonTelemetry.cfg"
     parser = argparse.ArgumentParser()
     parser.add_argument("bCallSign", help="Enter Balloon Callsign with SSID")
     args = parser.parse_args()
 
-    config_object = configparser.ConfigParser()
-    file = open(cfgFile, "r")
-    config_object.read_file(file)
-    output_dict = dict()
-    sections = config_object.sections()
-    for section in sections:
-        items = config_object.items(section)
-        output_dict[section] = dict(items)
 
-    return output_dict[args.bCallSign.upper()]
-
+    cfgUpdater = ConfigUpdater()
+    cfgUpdater.read(CFG_FILE)
+    cfg = cfgUpdater.to_dict()
+    return cfg[args.bCallSign.upper()]
 
 #==============================================================================================================#
 
@@ -80,12 +75,18 @@ def checkCfg(bCallsign):
 
 def putBalloonCfg(Balloon, lDateTime):
     # save last datetime to ini
-    cfgFile = "BalloonTelemetry.cfg"
+    cfgUpdater = ConfigUpdater()
+    cfgUpdater.read(CFG_FILE)
+    cfgUpdater[Balloon]['ldatetime'].value = lDateTime
+    cfgUpdater.update_file()    
+    return
+
+"""    
     config_obj = configparser.ConfigParser()
-    config_obj.read(cfgFile)
+    config_obj.read(CFG_FILE)
     cSection = config_obj[Balloon]
     cSection["lDateTime"] = lDateTime
-    with open(cfgFile, 'w') as configfile:
+    with open(CFG_FILE, 'w') as configfile:
         config_obj.write(configfile)
     logging.info(' lDateTime has been updated in the config file')
-    return
+"""

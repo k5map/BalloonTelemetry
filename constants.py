@@ -11,6 +11,8 @@
 # (at your option) any later version.                                                                          #
 #                                                                                                              #
 #==============================================================================================================#
-__version__ = '0.2.0'
+__version__ = '0.2.2'
 
 SOFTWARE_NAME = "k5map-python"
+
+CFG_FILE = "BalloonTelemetry.cfg"
