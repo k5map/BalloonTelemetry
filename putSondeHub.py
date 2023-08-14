@@ -67,11 +67,48 @@ def putSondeHub(aSondeData):
         return -1
 
     #print("Response code = ", response.status_code)         # 200 = data accepted and saved; 500 = data not accepted
+    logging.debug(f" Data to be uploaded -- {aSondeData}")
     logging.info(f" Number of records uploaded to SondeData = {len(aSondeData)}")
 
     return 0
 
 """
+Sample Upload to SondeHub:
+[
+  {
+    "dev": "string",
+    "software_name": "string",
+    "software_version": "string",
+    "uploader_callsign": "string",
+    "time_received": "2023-08-14T00:10:34.837Z",
+    "payload_callsign": "string",
+    "datetime": "2023-08-14T00:10:34.837Z",
+    "lat": 0,
+    "lon": 0,
+    "alt": 0,
+    "frequency": 0,
+    "temp": 0,
+    "humidity": 0,
+    "vel_h": 0,
+    "vel_v": 0,
+    "pressure": 0,
+    "heading": 0,
+    "batt": 0,
+    "sats": 0,
+    "snr": 0,
+    "rssi": 0,
+    "uploader_position": [
+      0,
+      0,
+      0
+    ],
+    "uploader_antenna": "string",
+    "telemetry_hidden": true,
+    "historical": true,
+    "upload_time": "Unknown Type: date-time"
+  }
+]
+
 import requests
 
 headers = {

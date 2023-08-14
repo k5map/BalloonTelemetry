@@ -203,7 +203,10 @@ def VerifyCallsign(strCallSign):
 """
 if __name__ == "__main__":
     #logging.info("Current Log Level : {}\n".format(logging.getLevel()))
-    sDateTime = '2023-08-02 23:58:00'
-    x = adjDateTime(sDateTime)
-    print(f" sDateTime = {sDateTime}, adjDateTime = {x}")
+    #sDateTime = '2023-08-02 23:58:00'
+    #x = adjDateTime(sDateTime)
+    #print(f" sDateTime = {sDateTime}, adjDateTime = {x}")
+    
+    lat, lon = GridtoLatLon('EL29fx')
+    print(f"lat = {lat:.3f}, lon = {lon:.3f}")
 """

@@ -33,7 +33,6 @@ def getBalloonCfg():
     parser.add_argument("bCallSign", help="Enter Balloon Callsign with SSID")
     args = parser.parse_args()
 
-
     cfgUpdater = ConfigUpdater()
     cfgUpdater.read(CFG_FILE)
     cfg = cfgUpdater.to_dict()
@@ -80,13 +79,3 @@ def putBalloonCfg(Balloon, lDateTime):
     cfgUpdater[Balloon]['ldatetime'].value = lDateTime
     cfgUpdater.update_file()    
     return
-
-"""    
-    config_obj = configparser.ConfigParser()
-    config_obj.read(CFG_FILE)
-    cSection = config_obj[Balloon]
-    cSection["lDateTime"] = lDateTime
-    with open(CFG_FILE, 'w') as configfile:
-        config_obj.write(configfile)
-    logging.info(' lDateTime has been updated in the config file')
-"""

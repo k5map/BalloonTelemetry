@@ -72,7 +72,7 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
                 aMatch.append(jWSPRRec1[i])
                 aMatch.append(jWSPRRec2[j])
                 logging.debug(f" Found 1st record to process = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
-                logging.debug(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec1[j]['band']}")
+                logging.debug(f" Found 2nd record to process = {jWSPRRec2[j]['tx_sign']}, {jWSPRRec2[j]['time']}, {jWSPRRec2[j]['tx_loc']}, {jWSPRRec2[j]['band']}")
             else:
                 logging.debug(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
 
@@ -186,7 +186,7 @@ def decodeRecords(Packet1, Packet2):
     #print(f"azimuth = {azimuth}, elevation = {elevation}")
 
     logging.debug(f" Telemetry data:  callsign1 = {Packet1['tx_sign']}, callsign2 = {Packet2['tx_sign']}, time = {Packet1['time']}, " +
-                  f"channel = {Channel}, Grid = {Grid}, Sat = {Sat}, Speed = {Speed}, Alt(m) = {Altitude}, Temp(c) = {Temp}, azimuth = {azimuth}, elevation = {elevation}")
+                  f"channel = {Channel}, grid = {Grid}, sats = {Sat}, speed = {Speed}, alt(m) = {Altitude}, temp(c) = {Temp}, azimuth = {azimuth}, elevation = {elevation}")
 
     TelemetryData = {
         "callsign1" : Packet1['tx_sign'],
@@ -194,7 +194,7 @@ def decodeRecords(Packet1, Packet2):
         "time" : Packet1['time'],
         "channel" : Channel,
         "grid" : Grid,
-        "sat" : Sat,
+        "sats" : Sat,
         "speed" : Speed,
         "altitude" : Altitude,
         "temp" : Temp,
@@ -313,7 +313,7 @@ def getAB5SS(bCfg, last_date):
         logging.warning(" Exit function, insufficient WSPR records to process" )
         return 0, None, None
 
-    #pprint.pp(jWsprData)
+    pprint.pp(jWsprData)
     print("-"*40)
 
     callsign = jWsprData[record_count-1]['tx_sign']
@@ -371,13 +371,14 @@ def getAB5SS(bCfg, last_date):
 
         # add telemetry data
         # build strComment  channel, Sats?, voltage?, alt(m), 0C?, grid, callsign2, callsign1, comment
-        strComment = str(jDecodedData[i]['channel']) + " Sats (voltage) " + str(jDecodedData[i]['altitude']) + "m OC " + jDecodedData[i]['grid'] + " " + jDecodedData[i]['callsign2']
-        strComment += " " + jDecodedData[i]['callsign1'] + " " + bCfg['comment']
+        strComment = str(jDecodedData[i]['channel']) + " Sats " + jDecodedData[i]['sats'] + " (voltage) " + str(jDecodedData[i]['altitude']) + "m " 
+        strComment += str(jDecodedData[i]['temp']) + "C " + jDecodedData[i]['grid'] + " " + jDecodedData[i]['callsign2'] + " " + jDecodedData[i]['callsign1'] + " " + bCfg['comment']
 
         # put data into jUploadData format for uploading
+        lat, lon = GridtoLatLon(jDecodedData[i]['grid'])
         JSON = {"software_name" : SOFTWARE_NAME, "software_version" : __version__, "uploader_callsign" : bCfg['uploadcallsign'], "time_received" : datetime1,
-            "payload_callsign" : BalloonCallsign, "datetime" : datetime2, "lat" : aMatch[i]['tx_lat'], "lon" : aMatch[i]['tx_lon'], "alt" : jDecodedData[i]['altitude'], 
-            "grid" : jDecodedData[i]['grid'], "comment" : strComment}
+            "payload_callsign" : BalloonCallsign, "datetime" : datetime2, "lat" : round(lat,3), "lon" : round(lon,3), "alt" : jDecodedData[i]['altitude'], 
+            "sats" : jDecodedData[i]['sats'], "temp" : jDecodedData[i]['temp'], "grid" : jDecodedData[i]['grid'], "comment" : strComment}
         jUploadData.append(JSON)
 
 
@@ -388,19 +389,8 @@ def getAB5SS(bCfg, last_date):
     # create data file for John
     # !!!!!!!!!!!!!!!!!!!!!!!!!
     if bCfg['telemetryfile'] == 'Y':
-        """
-        jDump = {}
-        for index, element in enumerate(aMatch):
-            jDump[index] = element
-        print("="*40)
-        pprint.pp(jDump)
-        print(f"jDump record count = {len(jDump)}")
-        json_object = json.dumps(jDump, indent=4)
-        with open("AB5SS-dump.json", "w") as outfile:
-            outfile.write(json_object)
-        """
         pprint.pp(jDecodedData, indent=2)
-        outputFilename = BalloonCallsign + ".txt"
+        outputFilename = BalloonCallsign + ".csv"
         with open(outputFilename, 'w') as file:
             csv_file = csv.writer(file)
             csv_file.writerow(jDecodedData[0].keys())     # write header from keys
