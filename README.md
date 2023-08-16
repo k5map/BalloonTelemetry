@@ -10,7 +10,7 @@ This script is currently under development and is not ready for use.  The initia
 * Zachtek
 * AB5SS pico
 * QRP-Labs LightAPRS-W - future release
-* QRP-Labs U4B - future release
+* QRP-Labs U4B/Tranquito - in development
 
 ## Features
 

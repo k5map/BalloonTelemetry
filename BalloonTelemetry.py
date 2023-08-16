@@ -41,6 +41,7 @@ import pprint
 from BalloonCfg import *
 from getZachtek import *
 from getAB5SS import *
+from getU4B import *
 from putSondeHub import *
 from putAprsIS import *
 from miscFunctions import *
@@ -133,8 +134,7 @@ match tracker:
     case "U":
         #  U4B tracker selected
         logging.info(f" Tracker selected = {tracker} (U4B)" )
-        # call function
-        rCode = 0       #!!!!!!!!!!!!!!!!!!!!!!!!!!
+        rCode, jUploadData, lastDateTime = getU4B(BalloonCfg, strLastTime)
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )
 

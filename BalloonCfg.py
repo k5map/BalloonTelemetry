@@ -41,6 +41,9 @@ def getBalloonCfg():
 #==============================================================================================================#
 
 def checkCfg(bCallsign):
+    if 'tracker' not in bCallsign.keys():
+        logging.error(f" *** Item 'tracker' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
     if 'uploadcallsign' not in bCallsign.keys():
         logging.error(f" *** Item 'uploadcallsign' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
@@ -53,9 +56,6 @@ def checkCfg(bCallsign):
     if 'timeslot' not in bCallsign.keys():
         logging.error(f" *** Item 'timeslot' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
-    if 'tracker' not in bCallsign.keys():
-        logging.error(f" *** Item 'tracker' was NOT found in CFG file" )
-        sys.exit( "\n*** Missing CFG item, check log file ***" )
     if 'comment' not in bCallsign.keys():
         logging.error(f" *** Item 'comment' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
@@ -67,6 +67,12 @@ def checkCfg(bCallsign):
         sys.exit( "\n*** Missing CFG item, check log file ***" )
     if 'ldatetime' not in bCallsign.keys():
         logging.error(f" *** Item 'ldatetime' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if bCallsign['tracker'] == 'U' and 'channel' not in bCallsign.keys():
+        logging.error(f" *** Item 'channel' was NOT found in CFG file" )
+        sys.exit( "\n*** Missing CFG item, check log file ***" )
+    if bCallsign['tracker'] == 'U' and 'band' not in bCallsign.keys():
+        logging.error(f" *** Item 'band' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
     return
 

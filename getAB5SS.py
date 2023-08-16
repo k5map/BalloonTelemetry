@@ -36,7 +36,7 @@ import urllib.request, urllib.error
 import json
 #import time
 #import datetime
-import math
+#import math
 import csv
 from socket import *
 import pprint
@@ -117,7 +117,7 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
 #
 #   Sat status -
 #
-def decodeRecords(Packet1, Packet2):
+def decodeAB5SS(Packet1, Packet2):
     # use both packets to decode telemetry data
     PowerTable = {
         0: {'alt1' : 0, 'alt2' : 0},
@@ -363,7 +363,7 @@ def getAB5SS(bCfg, last_date):
     jDecodedData = {}
     jUploadData = []
     for i in range(0, len(aMatch), 2):
-        jDecodedData[i] = decodeRecords(aMatch[i], aMatch[i+1])
+        jDecodedData[i] = decodeAB5SS(aMatch[i], aMatch[i+1])
 
         # reformat time from WSPR format to Zulu
         datetime1 = reformatDateTime(aMatch[i]['time'], 0)
@@ -371,7 +371,7 @@ def getAB5SS(bCfg, last_date):
 
         # add telemetry data
         # build strComment  channel, Sats?, voltage?, alt(m), 0C?, grid, callsign2, callsign1, comment
-        strComment = str(jDecodedData[i]['channel']) + " Sats " + jDecodedData[i]['sats'] + " (voltage) " + str(jDecodedData[i]['altitude']) + "m " 
+        strComment = str(jDecodedData[i]['channel']) + " Sats " + jDecodedData[i]['sats'] + str(jDecodedData[i]['altitude']) + "m " 
         strComment += str(jDecodedData[i]['temp']) + "C " + jDecodedData[i]['grid'] + " " + jDecodedData[i]['callsign2'] + " " + jDecodedData[i]['callsign1'] + " " + bCfg['comment']
 
         # put data into jUploadData format for uploading
@@ -387,7 +387,6 @@ def getAB5SS(bCfg, last_date):
     logging.info(f" Number of records ready for upload = {len(jUploadData)}" )
 
     # create data file for John
-    # !!!!!!!!!!!!!!!!!!!!!!!!!
     if bCfg['telemetryfile'] == 'Y':
         pprint.pp(jDecodedData, indent=2)
         outputFilename = BalloonCallsign + ".csv"
@@ -398,44 +397,3 @@ def getAB5SS(bCfg, last_date):
                 csv_file.writerow(jDecodedData[item].values())
 
     return 1, jUploadData, aMatch[i]['time']
-
-
-"""
-Iterating Through a Nested Dictionary
-people = {1: {'Name': 'John', 'Age': '27', 'Sex': 'Male'},
-          2: {'Name': 'Marie', 'Age': '22', 'Sex': 'Female'}}
-
-for p_id, p_info in people.items():
-    print("\nPerson ID:", p_id)
-    
-    for key in p_info:
-        print(key + ':', p_info[key])
-
-#--------------------------------------------------------------------------------------------------------------#
-def delDupRecords(jData):
-    # remove duplicae records in JSON structure
-    jTemp = {}
-    for i in range(len(jData)):
-        result = next((item for item in jTemp if item["tx_band"] == jData[i]["band"] and item["tx_loc"] == jData[i]["tx_loc"]), None)
-        if result == None:
-            jTemp.append(jData[i])
-
-    print(f"Lenght of jTemp = {len(jTemp)}")
-    return jTemp
-
-#--------------------------------------------------------------------------------------------------------------#
-
-names = ['Bruce', 'Clark', 'Peter']
-heros = ['Batman', 'Superman', 'Spiderman']
-my_dict = {}
-for name, value in zip(names, heros):
-    mydict[name] = value
-print mydict
-
-OR
-
-my_dict = {name: hero for name, hero in zip(names, heros)}
-my_dict = {name: hero for name, hero in zip(names, heros) if name != 'Peter'}
-print my_dict
-
-"""
