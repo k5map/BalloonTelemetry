@@ -27,8 +27,9 @@
 #
 #==============================================================================================================#
 #  Resources
-#       https://github.com/sm3ulc/hab-wspr      Special thanks to David SM3ULC for his encode/decode routines
+#       https://github.com/sm3ulc/hab-wspr  --  Special thanks to David SM3ULC for his encode/decode routines
 #       https://github.com/traquito/traquito.github.io
+#       http://qrp-labs.com/flights/s4#protocol  --  details about telemetry protocol
 #==============================================================================================================#
 #
 # real data:  WA1DVR-8, VE6AZX-14, AD6Z-12, LU1ESY-40, VE3KCL-37, AD6Z-11, VE3PRO-11, WB6TOU-14
@@ -209,7 +210,7 @@ def decodeU4B(JSON1, JSON2):
           ( spot_pos_time, spot_pos_call, lat, lon, loc, alt, temp, batt, speed, gps, sats ))
 
     telemetry = {'time':spot_pos_time, "call":spot_pos_call, "lat":round(lat,3), "lon":round(lon,3), "grid":loc, "alt": alt,
-                 "temp":round(temp,1), "batt":round(batt,1), "speed":speed, "gps":gps, "sats":sats }
+                 "temp":round(temp,1), "batt":round(batt,2), "speed":speed, "gps":gps, "sats":sats }
 
     return telemetry
 
@@ -335,7 +336,15 @@ def getU4B(bCfg, lastdate):
     logging.info(f" Decoding completed, record count = {len(jUploadData)}" )
     pprint.pp(jUploadData)
 
-    #!!!!!!!!!!     if option selected, export to CSV file
+    # if option selected, create data file for John
+    if bCfg['telemetryfile'] == 'Y':
+        #pprint.pp(jDecodedData, indent=2)
+        logging.info(f" Saving telemetry data to CSV file" )
+        outputFilename = BalloonCallsign + ".csv"
+        with open(outputFilename, 'w') as file:
+            csv_file = csv.writer(file)
+            csv_file.writerow(jDecodedData[0].keys())     # write header from keys
+            for item in jDecodedData:
+                csv_file.writerow(jDecodedData[item].values())
 
-    #return 1, jUploadData, aMatch[i]['time']
-    return 0, None, None
+    return 1, jUploadData, aMatch[i]['time']

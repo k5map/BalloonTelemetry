@@ -382,13 +382,13 @@ def getAB5SS(bCfg, last_date):
         jUploadData.append(JSON)
 
 
-    logging.info(f" Number of records after decoding = {len(jDecodedData)}" )
+    logging.info(f" Decoding completed, record count = {len(jUploadData)}" )
     pprint.pp(jUploadData, indent=2)
-    logging.info(f" Number of records ready for upload = {len(jUploadData)}" )
-
+ 
     # create data file for John
     if bCfg['telemetryfile'] == 'Y':
-        pprint.pp(jDecodedData, indent=2)
+        logging.info(f" Saving telemetry data to CSV file" )
+        #pprint.pp(jDecodedData, indent=2)
         outputFilename = BalloonCallsign + ".csv"
         with open(outputFilename, 'w') as file:
             csv_file = csv.writer(file)
