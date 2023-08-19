@@ -38,6 +38,10 @@ Requirements: Python v3.x
     $ pip install maidenhead
     $ pip install configupdater
 
+## Execution
+
+    $ python BalloonTelemetry.py callsign-999   [balloon callsign and SSID to be shown on APRS.fi or SondeHub ]
+
 
 ## Testing
 

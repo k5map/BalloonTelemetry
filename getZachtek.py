@@ -38,7 +38,7 @@ import json
 #import time
 #import datetime
 from socket import *
-#import pprint
+import pprint
 
 from miscFunctions import *
 from constants import __version__, SOFTWARE_NAME
@@ -104,7 +104,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
         logging.warning(" Exit function, insufficient WSPR records to process" )
         return 0, None, None
 
-    ##pprint.pp(jWsprData)
+    #pprint.pp(jWsprData)
     aDateTime = []
     aMatch = []
     # build array of 'time' from WSPR data (2023-07-23 06:36:00)
@@ -143,9 +143,10 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
 
         # calc altitude from power
         # reference https://github.com/HarrydeBug/WSPR-transmitters/blob/master/Standard%20Firmware/Release/Hardware_Version_2_ESP8285/WSPR-TX2.05/WSPR-TX2.05.ino line 1430
-        alt1 = int(jWsprData[x]['power']) * 300
+        #alt1 = int(jWsprData[x]['power']) * 300
         #alt2 = int(jWsprData[i+1]['power']) * 300
-        altitude = alt1
+        altitude = (int(jWsprData[x]['power']) + int(jWsprData[y]['power'])) * 300
+        logging.debug(f" alt1 = {jWsprData[x]['power']}, alt2 = {jWsprData[y]['power']}, altitude(m) = {altitude}")
 
         ##logging.info(" Altitude: meters = " + str(altitude) + ", feet = " + str(round(altitude*3.28084)))
         logging.info(f" DateTime: {jWsprData[y]['time']}, Grid: {jWsprData[y]['tx_loc']}, Lat: {lat}, Lon: {lon}, Alt: {altitude}m {round(altitude*3.28084)}ft, x-y {x} {y}")
@@ -160,8 +161,11 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
         jUploadData.append(JSON)
 
     logging.debug(f" jUploadData Len = {len(jUploadData)}")
-    #print("----------------------------------------")
+    print("----------------------------------------")
     #pprint.pp(jUploadData[i], indent=2)
+    l = len(aMatch)
+    pprint.pp(jWsprData[aMatch[l-2]], indent=2)
+    pprint.pp(jWsprData[aMatch[l-1]], indent=2)
 
     return 1, jUploadData, jWsprData[y]['time']
 
