@@ -3,14 +3,13 @@
 
 A Python script to process Amateur Radio balloon data from [WSPR Live](https://wspr.live/)  and upload it to multiple sites where it can be tracked on [SondeHub](https://amateur.sondehub.org/) and [APRS.fi](https://aprs.fi/) web sites.
 
-This script is currently under development and is not ready for use.  The initial release is expected in the next two weeks.
 
 ## Balloon Trackers Supported
 
 * Zachtek
 * AB5SS pico
 * QRP-Labs LightAPRS-W - future release
-* QRP-Labs U4B/Tranquito - in development
+* QRP-Labs U4B/Tranquito
 
 ## Features
 
