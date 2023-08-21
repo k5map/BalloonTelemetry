@@ -32,11 +32,12 @@ import logging
 import traceback
 import requests
 #import pprint
+from typing import Dict, List
 
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def putSondeHub(aSondeData):
+def putSondeHub(aSondeData: List) -> int:
     logging.info("#" + ("-"*130))
     logging.info(" Function putSondeHub start" )
 
@@ -71,85 +72,3 @@ def putSondeHub(aSondeData):
     logging.info(f" Number of records uploaded to SondeData = {len(aSondeData)}")
 
     return 0
-
-"""
-Sample Upload to SondeHub:
-[
-  {
-    "dev": "string",
-    "software_name": "string",
-    "software_version": "string",
-    "uploader_callsign": "string",
-    "time_received": "2023-08-14T00:10:34.837Z",
-    "payload_callsign": "string",
-    "datetime": "2023-08-14T00:10:34.837Z",
-    "lat": 0,
-    "lon": 0,
-    "alt": 0,
-    "frequency": 0,
-    "temp": 0,
-    "humidity": 0,
-    "vel_h": 0,
-    "vel_v": 0,
-    "pressure": 0,
-    "heading": 0,
-    "batt": 0,
-    "sats": 0,
-    "snr": 0,
-    "rssi": 0,
-    "uploader_position": [
-      0,
-      0,
-      0
-    ],
-    "uploader_antenna": "string",
-    "telemetry_hidden": true,
-    "historical": true,
-    "upload_time": "Unknown Type: date-time"
-  }
-]
-
-import requests
-
-headers = {
-    'accept': 'text/plain',
-    'Content-Type': 'application/json',
-}
-
-json_data = [
-    {
-        'software_name': 'k5map-python',
-        'software_version': '0.1',
-        'uploader_callsign': 'K5MAP',
-        'time_received': '2023-07-21T19:50:00.000Z',
-        'payload_callsign': 'K5MAP-9',
-        'datetime': '2023-07-21T19:50:01.000Z',
-        'lat': 30.06,
-        'lon': -95.56,
-        'alt': 10000,
-    },
-    {
-        'software_name': 'k5map-python',
-        'software_version': '0.1',
-        'uploader_callsign': 'K5MAP',
-        'time_received': '2023-07-21T19:50:00.000Z',
-        'payload_callsign': 'K5MAP-9',
-        'datetime': '2023-07-21T19:50:01.000Z',
-        'lat': 30.08,
-        'lon': -95.58,
-        'alt': 10000,
-    },
-]
-
-response = requests.put('https://api.v2.sondehub.org/amateur/telemetry', headers=headers, json=json_data)
-
-----------------------------
-import requests
-import json
-
-url = 'https://httpbin.org/post'
-payload = {'Spiderman': 'Peter Parker'}
-res = requests.post(url, data=json.dumps(payload))
-print(res.text)
-
-"""

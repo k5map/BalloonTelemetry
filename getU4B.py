@@ -41,13 +41,14 @@ import urllib.request, urllib.error
 import json
 import csv
 from socket import *
+from typing import Dict, List
 import pprint
 
 from miscFunctions import *
 from constants import __version__, SOFTWARE_NAME
 
 
-def deldupU4B(spotlist):
+def deldupU4B(spotlist: List) -> List:
     logging.debug(f" deldupU4B starting record count = {len(spotlist)}")
     rc = 0
     rc_max = len(spotlist) - 1
@@ -63,7 +64,7 @@ def deldupU4B(spotlist):
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchU4BRecords(jWSPRRec1, jWSPRRec2):
+def matchU4BRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
     # determine if 2nd record avilable to process
     logging.info(f" Starting record matching process")
 
@@ -96,7 +97,7 @@ def matchU4BRecords(jWSPRRec1, jWSPRRec2):
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def decodeU4B(JSON1, JSON2):
+def decodeU4B(JSON1: Dict, JSON2: Dict) -> Dict:
     pow2dec = {0:0,3:1,7:2,10:3,13:4,17:5,20:6,23:7,27:8,30:9,33:10,37:11,40:12,43:13,47:14,50:15,53:16,57:17,60:18}
 
     spot_pos_time = JSON1['time']
@@ -216,7 +217,7 @@ def decodeU4B(JSON1, JSON2):
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getU4B(bCfg, lastdate):
+def getU4B(bCfg: Dict, lastdate: str):
     # CFG values used in function
     wCallsign = bCfg['wsprcallsign']
     BalloonCallsign = bCfg['ballooncallsign']

@@ -78,7 +78,7 @@ def adjDateTime(sDateTime):
 # - returns (DDDMM.SSc where c = N, S, W, E                                                                    #
 #                                                                                                              #
 #==============================================================================================================#
-def deg_to_dms(deg, type='lat'):
+def deg_to_dms(deg: float, type='lat') -> str:
     decimals, number = math.modf(deg)
     d = int(number)
     m = int(decimals * 60)
@@ -99,7 +99,7 @@ def deg_to_dms(deg, type='lat'):
 # - returns (30.020833333333332, -95.54166666666666) - each are float vars                                     #
 #                                                                                                              #
 #==============================================================================================================#
-def GridtoLatLon(grid):
+def GridtoLatLon(grid: str):
     # split each char of grid
     # Ascii = ord ('E') = 69
     return mh.to_location(grid, center=True)
@@ -112,7 +112,7 @@ def GridtoLatLon(grid):
 # - returns band as integer                                                                                    #
 #                                                                                                              #
 #==============================================================================================================#
-def FreqToBand(freq):
+def FreqToBand(freq: float) -> int:
     # 14097093 example from WSPR frequency field
     # 10, 12, 15, 17, 20, 40, 80
     f = freq / 1000000
@@ -144,7 +144,7 @@ def FreqToBand(freq):
 # - returns Epoch as integer                                                                                   #
 #                                                                                                              #
 #==============================================================================================================#
-def UTCtoEpoch(strDateTime, fCode):
+def UTCtoEpoch(strDateTime: str, fCode: int) -> int:
     #intEpoch = calendar.timegm(time.strptime(strDateTime, '%Y-%m-%d %H:%M:%S'))
     intEpoch = calendar.timegm(time.strptime(strDateTime, fCode))
     return intEpoch
@@ -156,7 +156,7 @@ def UTCtoEpoch(strDateTime, fCode):
 # - converts datetime string 'YYYY-MM-DD HH:MM:SS' to Zulu 'YYYY-MM-DDTHH:MM:SSZ                               #
 #                                                                                                              #
 #==============================================================================================================#
-def reformatDateTime(strDateTime, offset):
+def reformatDateTime(strDateTime: str, offset: int) -> str:
     t1 = datetime.datetime.strptime(strDateTime, "%Y-%m-%d %H:%M:%S")
     if offset > 0:
         t2 = t1 + datetime.timedelta(seconds=offset)
@@ -174,7 +174,7 @@ def reformatDateTime(strDateTime, offset):
 # - returns datetime as string                                                                                 #
 #                                                                                                              #
 #==============================================================================================================#
-def EpochtoUTC(intEpoch, fcode):
+def EpochtoUTC(intEpoch: int, fcode: int) -> str:
     # strDateTime = datetime.datetime.fromtimestamp(intEpoch).strftime('%Y-%m-%d %H:%M:%S')
     strDateTime = datetime.datetime.utcfromtimestamp(intEpoch).strftime(fcode)
     return strDateTime
@@ -187,7 +187,7 @@ def EpochtoUTC(intEpoch, fcode):
 # - returns boolean                                                                                            #
 #                                                                                                              #
 #==============================================================================================================#
-def VerifyCallsign(strCallSign):
+def VerifyCallsign(strCallSign: str) -> bool:
     callsign = strCallSign
     if (i := strCallSign.find('-')) > 0:
         callsign = strCallSign[0:i]

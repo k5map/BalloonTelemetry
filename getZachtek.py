@@ -38,6 +38,7 @@ import json
 #import time
 #import datetime
 from socket import *
+from typing import Dict, List
 import pprint
 
 from miscFunctions import *
@@ -45,13 +46,10 @@ from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchZachtekRecords(aDateTime, index):
+def matchZachtekRecords(aDateTime: List, index: int) -> int:
     # determine if 2nd record avilable to process
     
-    # add 2 minutes to found record datetime
-    #given_time = datetime.datetime.strptime(aDateTime[index]['time'], "%Y-%m-%d %H:%M:%S")
-    #future = given_time + datetime.timedelta(minutes=2)
-    #sDateTime2 = future.strftime("%Y-%m-%d %H:%M:%S")
+    # add 2 minutes to found record datetime0
     sDateTime2 = adjDateTime(aDateTime[index]['time'])
 
     record_found = False
@@ -67,7 +65,7 @@ def matchZachtekRecords(aDateTime, index):
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment ):
+def getZachtek(wCallsign: str, uCallsign: str, bCallsign: str, timeslot: str, last_date: str, strComment: str):
     """
     Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
     """
@@ -107,7 +105,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
     #pprint.pp(jWsprData)
     aDateTime = []
     aMatch = []
-    # build array of 'time' from WSPR data (2023-07-23 06:36:00)
+    # build array of 'time' from WSPR data (i.e., 2023-07-23 06:36:00)
     for i in range(len(jWsprData)):
         try:
             aDateTime.index(jWsprData[i]['time'])
@@ -133,9 +131,9 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
     # found at least 1 set matched, assemble json for upload
     jUploadData = []
     for i in range(0, len(aMatch), 2):
-        x = aMatch[i]           # Index to 1st record
+        x = aMatch[i]       # Index to 1st record
         j = i + 1
-        y = aMatch[j]         # Index to 2nd record
+        y = aMatch[j]       # Index to 2nd record
         # calc lat/lon from grid
         pos = GridtoLatLon(jWsprData[y]['tx_loc'])              # use Grid from 2nd packet
         lat = round(pos[0],3)
@@ -143,10 +141,8 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
 
         # calc altitude from power
         # reference https://github.com/HarrydeBug/WSPR-transmitters/blob/master/Standard%20Firmware/Release/Hardware_Version_2_ESP8285/WSPR-TX2.05/WSPR-TX2.05.ino line 1430
-        #alt1 = int(jWsprData[x]['power']) * 300
-        #alt2 = int(jWsprData[i+1]['power']) * 300
         altitude = (int(jWsprData[x]['power']) + int(jWsprData[y]['power'])) * 300
-        logging.debug(f" alt1 = {jWsprData[x]['power']}, alt2 = {jWsprData[y]['power']}, altitude(m) = {altitude}")
+        logging.debug(f" alt1/power = {jWsprData[x]['power']}, alt2/power = {jWsprData[y]['power']}, altitude = {altitude}m")
 
         ##logging.info(" Altitude: meters = " + str(altitude) + ", feet = " + str(round(altitude*3.28084)))
         logging.info(f" DateTime: {jWsprData[y]['time']}, Grid: {jWsprData[y]['tx_loc']}, Lat: {lat}, Lon: {lon}, Alt: {altitude}m {round(altitude*3.28084)}ft, x-y {x} {y}")
@@ -160,7 +156,7 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
             "payload_callsign" : bCallsign, "datetime" : datetime2, "lat" : lat, "lon" : lon, "alt" : altitude, "grid" : jWsprData[y]['tx_loc'], "comment" : strComment}
         jUploadData.append(JSON)
 
-    logging.debug(f" jUploadData Len = {len(jUploadData)}")
+    logging.debug(f" jUploadData records = {len(jUploadData)}")
     print("----------------------------------------")
     #pprint.pp(jUploadData[i], indent=2)
     l = len(aMatch)
@@ -168,27 +164,3 @@ def getZachtek(wCallsign, uCallsign, bCallsign, timeslot, last_date, strComment 
     pprint.pp(jWsprData[aMatch[l-1]], indent=2)
 
     return 1, jUploadData, jWsprData[y]['time']
-
-"""
-Sample WSPR data
- {'id': '6089921639',
-  'time': '2023-07-25 18:30:00',
-  'band': 14,
-  'rx_sign': 'W3FGP',
-  'rx_lat': 38.979,
-  'rx_lon': -76.875,
-  'rx_loc': 'FM18nx',
-  'tx_sign': 'W3FGP/A',
-  'tx_lat': 38.979,
-  'tx_lon': -76.875,
-  'tx_loc': 'FM18nx',
-  'distance': 0,
-  'azimuth': 0,
-  'rx_azimuth': 0,
-  'frequency': 14097093,
-  'power': 13,
-  'snr': -3,
-  'drift': 0,
-  'version': '2.6.1',
-  'code': 1},
-"""

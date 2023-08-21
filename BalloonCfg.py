@@ -24,11 +24,12 @@ import logging
 import argparse
 from configupdater import ConfigUpdater
 import configparser
+from typing import Dict, List
 
 from constants import CFG_FILE
 
 
-def getBalloonCfg():
+def getBalloonCfg() -> Dict:
     parser = argparse.ArgumentParser()
     parser.add_argument("bCallSign", help="Enter Balloon Callsign with SSID")
     args = parser.parse_args()
@@ -40,7 +41,7 @@ def getBalloonCfg():
 
 #==============================================================================================================#
 
-def checkCfg(bCallsign):
+def checkCfg(bCallsign: str):
     if 'tracker' not in bCallsign.keys():
         logging.error(f" *** Item 'tracker' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
@@ -78,7 +79,7 @@ def checkCfg(bCallsign):
 
 #==============================================================================================================#
 
-def putBalloonCfg(Balloon, lDateTime):
+def putBalloonCfg(Balloon: str, lDateTime: str):
     # save last datetime to ini
     cfgUpdater = ConfigUpdater()
     cfgUpdater.read(CFG_FILE)

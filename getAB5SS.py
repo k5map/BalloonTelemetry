@@ -39,6 +39,7 @@ import json
 #import math
 import csv
 from socket import *
+from typing import Dict, List
 import pprint
 
 from SolarPos import *
@@ -46,7 +47,8 @@ from miscFunctions import *
 from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
-def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
+
+def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
     # determine if 2nd record avilable to process
     logging.info(f" Starting record matching process")
 
@@ -76,28 +78,6 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
             else:
                 logging.debug(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
 
-    """
-    >>> dicts = [
-        { "name": "Tom", "age": 10 },
-        { "name": "Mark", "age": 5 },
-        { "name": "Pam", "age": 7 },
-        { "name": "Dick", "age": 12 }
-    ]
-    >>> next((item for item in dicts if item["name"] == "Pam"), False)
-    {'name': 'Pam', 'age': 7}
-    >>> next((item for item in dicts if item["name"] == "Sam"), False)
-    False
-    >>>
-
-    next((item for item in dicts if item.get("name") and item["name"] == "Pam"), None)
-
-    for i in range(len(jWSPRRec1)):
-        if next((item for item in aResults if item['time'] == jWSPRRec1[i]['time']), False) == False:
-            aResults.append(jWSPRRec1[i])
-
-    print(f"aResults = {aResults}")
-    print(f"aResults len = {len(aResults)}")
-    """
     return aMatch
 
 
@@ -117,7 +97,7 @@ def matchAB5SSRecords(jWSPRRec1, jWSPRRec2):
 #
 #   Sat status -
 #
-def decodeAB5SS(Packet1, Packet2):
+def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
     # use both packets to decode telemetry data
     PowerTable = {
         0: {'alt1' : 0, 'alt2' : 0},
@@ -224,7 +204,7 @@ def decodeAB5SS(Packet1, Packet2):
 #
 # 6th char - take 6th char of Grid square
 #
-def convertCallsign(bCfg):
+def convertCallsign(bCfg: Dict) -> str:
     gridSquare = "EL29KO"       # !!!!!!!!!!!!!!!!!!!!!!!!
     speed = 89                  # !!!!!!!!!!!!!!!!!!!!!!!!
     temp = 25                   # !!!!!!!!!!!!!!!!!!!!!!!!
@@ -273,7 +253,8 @@ def convertCallsign(bCfg):
     return nCallsign
 
 #--------------------------------------------------------------------------------------------------------------#
-def getAB5SS(bCfg, last_date):
+
+def getAB5SS(bCfg: Dict, last_date: str):
     wCallsign = bCfg['wsprcallsign']
     BalloonCallsign = bCfg['ballooncallsign']
     """
@@ -397,3 +378,26 @@ def getAB5SS(bCfg, last_date):
                 csv_file.writerow(jDecodedData[item].values())
 
     return 1, jUploadData, aMatch[i]['time']
+
+    """
+    >>> dicts = [
+        { "name": "Tom", "age": 10 },
+        { "name": "Mark", "age": 5 },
+        { "name": "Pam", "age": 7 },
+        { "name": "Dick", "age": 12 }
+    ]
+    >>> next((item for item in dicts if item["name"] == "Pam"), False)
+    {'name': 'Pam', 'age': 7}
+    >>> next((item for item in dicts if item["name"] == "Sam"), False)
+    False
+    >>>
+
+    next((item for item in dicts if item.get("name") and item["name"] == "Pam"), None)
+
+    for i in range(len(jWSPRRec1)):
+        if next((item for item in aResults if item['time'] == jWSPRRec1[i]['time']), False) == False:
+            aResults.append(jWSPRRec1[i])
+
+    print(f"aResults = {aResults}")
+    print(f"aResults len = {len(aResults)}")
+    """

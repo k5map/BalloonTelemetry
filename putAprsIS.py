@@ -44,11 +44,12 @@ import aprslib
 import datetime
 #import pprint
 import math
+from typing import Dict, List
 
 from miscFunctions import *
 
 
-def putAprsIS(wCallsign, jUploadData):
+def putAprsIS(wCallsign: str, jUploadData: List) -> int:
     logging.info("#" + ("-"*130))
     logging.info(" Function putAprsIS start" )
 
