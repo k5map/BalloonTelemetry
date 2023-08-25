@@ -8,7 +8,7 @@ A Python script to process Amateur Radio balloon data from [WSPR Live](https://w
 
 * Zachtek
 * AB5SS pico
-* QRP-Labs LightAPRS-W - future release
+* QRP-Labs LightAPRS-W - in development 
 * QRP-Labs U4B/Tranquito
 
 ## Features
