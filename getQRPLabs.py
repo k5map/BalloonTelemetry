@@ -320,7 +320,8 @@ def getQRPLabs(bCfg: Dict, lastdate: str):
     logging.info(f" Decoding completed, record count = {len(jUploadData)}" )
     pprint.pp(jUploadData)
 
+    # if option selected, create data file for John
+    if bCfg['telemetryfile'] == 'Y':
+        pass
 
-
-
-    return 0, None, None
+    return  1, jUploadData, aMatch[i]['time']
