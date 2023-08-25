@@ -268,7 +268,7 @@ def getU4B(bCfg: Dict, lastdate: str):
     #sTime = '____-__-__ __:_' + ts + '%'
     logging.info(f" Values to use for 2nd packet:  ch1 = {ch1}, ch3 = {ch3}, ts = {ts}, band = {band}, sSign = {sSign}")
 
-    # download contents from wspr.live
+    # build query for 2nd packet
     query = "SELECT * FROM rx WHERE tx_sign LIKE '" + sSign + "' AND band=" + band + " AND time > '" + lastdate + "' ORDER BY time"
     logging.info(" SQL query = " + query )
     url = "https://db1.wspr.live/?query=" + urllib.parse.quote_plus(query + " FORMAT JSON")
