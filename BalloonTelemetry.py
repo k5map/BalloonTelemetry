@@ -42,6 +42,7 @@ from BalloonCfg import *
 from getZachtek import *
 from getAB5SS import *
 from getU4B import *
+from getQRPLabs import *
 from putSondeHub import *
 from putAprsIS import *
 from miscFunctions import *
@@ -126,7 +127,7 @@ match tracker:
     case "Q":
         #  QRP-Labs tracker selected
         logging.info(f" Tracker selected = {tracker} (QRP-Labs)" )
-        # call function
+        rCode, jUploadData, lastDateTime = getQRPLabs(BalloonCfg, strLastTime)
         rCode = 0       #!!!!!!!!!!!!!!!!!!!!!!!!!!
         if rCode == -1 :     # some sort of exception occured, check log
             sys.exit( 1 )

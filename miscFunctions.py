@@ -39,46 +39,64 @@ import datetime
 import math
 import re                        #regex
 import maidenhead as mh
+from typing import Dict, List, Tuple
 
 
-#==============================================================================================================#
-#                                                                                                              #
-# getPassCode(callsign)                                                                                        #
-# - returns 4 digit number used by APRS-IS API                                                                 #
-#                                                                                                              #
-#==============================================================================================================#
-def getPassCode(strCallsign):
+#--------------------------------------------------------------------------------------------------------------#
+
+def getPassCode(strCallsign: str) -> str:
     """
     Takes a CALLSIGN and returns passcode for APRS-IS
+
+    : param strCallsign: ham callsign
+    : return: 4-digit integer
     """
     PassCode = aprslib.passcode(strCallsign)
     return PassCode
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# adjDateTime()                                                                                                #
-# - returns a datetime string where the time has been increased by 2 minutes                                   #
-#                                                                                                              #
-#==============================================================================================================#
-def adjDateTime(sDateTime):
+def adjDateTime(sDateTime: str) -> str:
     """
     Takes a datetime string (YYYY-MM-DD HH:MM:SS) and adds 2 minutes
+
+    : param sDateTime: string 
+    : return: string
     """
     given_time = datetime.datetime.strptime(sDateTime, "%Y-%m-%d %H:%M:%S")
     future = given_time + datetime.timedelta(minutes=2)
     adjDT = future.strftime("%Y-%m-%d %H:%M:%S")
     return adjDT
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# deg_to_dms                                                                                                   #
-# - converts decimal degrees (99.9999) to degree, mintue, seconds                                              #
-# - returns (DDDMM.SSc where c = N, S, W, E                                                                    #
-#                                                                                                              #
-#==============================================================================================================#
+def deldupWspr(spotlist: List) -> List:
+    """
+    Elminate duplicate records based on callsign & time
+
+    : param spotlist: WSPR list of records
+    : return: WSPR list
+    """
+    rc = 0
+    rc_max = len(spotlist) - 1
+    if rc_max > 1:
+        while rc < rc_max:
+            if (spotlist[rc]['time'] == spotlist[rc+1]['time']) and (spotlist[rc]['tx_sign'] == spotlist[rc+1]['tx_sign']):
+                del spotlist[rc]
+                rc_max -= 1
+            else:
+                rc += 1
+    return spotlist
+
+#--------------------------------------------------------------------------------------------------------------#
+
 def deg_to_dms(deg: float, type='lat') -> str:
+    """
+    Convert decial degrees (99.9999) to degree, minute, seconds
+
+    : param deg: float, type: lat or lon
+    : return: string (DDDMM.SSc where c = N, S, W, E)
+    """
     decimals, number = math.modf(deg)
     d = int(number)
     m = int(decimals * 60)
@@ -91,28 +109,26 @@ def deg_to_dms(deg: float, type='lat') -> str:
     dStr = f"{abs(d):02}" if type == 'lat' else f"{abs(d):03}"
     return f'{dStr}{abs(m):02}.{abs(s):02.0f}{compass_str}'
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# GridtoLatLon                                                                                                 #
-# - converts QTH grid (Maidenhead) to Lat/Lon                                                                  #
-# - returns (30.020833333333332, -95.54166666666666) - each are float vars                                     #
-#                                                                                                              #
-#==============================================================================================================#
-def GridtoLatLon(grid: str):
-    # split each char of grid
-    # Ascii = ord ('E') = 69
+def GridtoLatLon(grid: str) -> Tuple[float, float]:
+    """
+    Convert a 6-char maidenhead grid to latitude, longitude in middle of grid
+
+    : param grid: string
+    : return: lat, lon
+    """
     return mh.to_location(grid, center=True)
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# FreqToBand                                                                                                   #
-# - converts TX frequency to band                                                                              #
-# - returns band as integer                                                                                    #
-#                                                                                                              #
-#==============================================================================================================#
 def FreqToBand(freq: float) -> int:
+    """
+    Takes frequency (float) and returns integer portion of frequency
+
+    : param freq: float
+    : return: integer
+    """
     # 14097093 example from WSPR frequency field
     # 10, 12, 15, 17, 20, 40, 80
     f = freq / 1000000
@@ -136,27 +152,28 @@ def FreqToBand(freq: float) -> int:
         band = 0
     return band
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# UTCtoEpoch(dateTime)                                                                                         #
-# - converts datetime string '2023-07-20 06:04:00' to Epoch time integer                                       #
-# - returns Epoch as integer                                                                                   #
-#                                                                                                              #
-#==============================================================================================================#
 def UTCtoEpoch(strDateTime: str, fCode: int) -> int:
+    """
+    Convert datetime string to Epoch time integer
+
+    : param strDateTime: string, fcode: time format (i.e. 'YYYY-MM-DD HH:MM:SS')
+    : return: integer
+    """
     #intEpoch = calendar.timegm(time.strptime(strDateTime, '%Y-%m-%d %H:%M:%S'))
     intEpoch = calendar.timegm(time.strptime(strDateTime, fCode))
     return intEpoch
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# reformatDateTime(dateTime1, offset)                                                                          #
-# - converts datetime string 'YYYY-MM-DD HH:MM:SS' to Zulu 'YYYY-MM-DDTHH:MM:SSZ                               #
-#                                                                                                              #
-#==============================================================================================================#
 def reformatDateTime(strDateTime: str, offset: int) -> str:
+    """
+    Reformat datetime string and adjust new time string by offset
+
+    : param strDateTime: string with format 'YYYY-MM-DD HH:MM:SS', offset: integer in seconds
+    : return: string with format 'YYYY-MM-DDTHH:MM:SS.SSSZ'
+    """
     t1 = datetime.datetime.strptime(strDateTime, "%Y-%m-%d %H:%M:%S")
     if offset > 0:
         t2 = t1 + datetime.timedelta(seconds=offset)
@@ -165,29 +182,28 @@ def reformatDateTime(strDateTime: str, offset: int) -> str:
     #datetime1 = t1.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     return t2.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
+#--------------------------------------------------------------------------------------------------------------#
 
-
-#==============================================================================================================#
-#                                                                                                              #
-# EpochtoUTC(epoch)                                                                                            #
-# - converts Epoch integer to datetime string '2023-07-20 06:04:00'                                            #
-# - returns datetime as string                                                                                 #
-#                                                                                                              #
-#==============================================================================================================#
 def EpochtoUTC(intEpoch: int, fcode: int) -> str:
+    """
+    Convert Epoch integer to datetime string
+
+    : param intEpoch: integer, fcode: format of output string (i.e. '%Y-%m-%d %H:%M:%S')
+    : return: string
+    """
     # strDateTime = datetime.datetime.fromtimestamp(intEpoch).strftime('%Y-%m-%d %H:%M:%S')
     strDateTime = datetime.datetime.utcfromtimestamp(intEpoch).strftime(fcode)
     return strDateTime
 
+#--------------------------------------------------------------------------------------------------------------#
 
-#==============================================================================================================#
-#                                                                                                              #
-# VerifyCallsign(callsign)                                                                                     #
-# - verifies string is a valid callsign                                                                        #
-# - returns boolean                                                                                            #
-#                                                                                                              #
-#==============================================================================================================#
 def VerifyCallsign(strCallSign: str) -> bool:
+    """
+    Verify callsign is a value ham radio callsign
+
+    : param strCallSign: string
+    : return: boolen (True, False)
+    """
     callsign = strCallSign
     if (i := strCallSign.find('-')) > 0:
         callsign = strCallSign[0:i]

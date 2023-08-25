@@ -23,7 +23,7 @@
 #
 # if not already installled, use pip to install the following
 #
-#    pip install ???
+#    pip install urllib3
 #
 #==============================================================================================================#
 #  Resources
@@ -47,20 +47,6 @@ import pprint
 from miscFunctions import *
 from constants import __version__, SOFTWARE_NAME
 
-
-def deldupU4B(spotlist: List) -> List:
-    logging.debug(f" deldupU4B starting record count = {len(spotlist)}")
-    rc = 0
-    rc_max = len(spotlist) - 1
-    if rc_max > 1:
-        while rc < rc_max:
-            if (spotlist[rc]['time'] == spotlist[rc+1]['time']) and (spotlist[rc]['tx_sign'] == spotlist[rc+1]['tx_sign']):
-                del spotlist[rc]
-                rc_max -= 1
-            else:
-                rc += 1
-    logging.debug(f" deldupU4B ending record count = {len(spotlist)}")
-    return spotlist
 
 #--------------------------------------------------------------------------------------------------------------#
 
@@ -218,6 +204,12 @@ def decodeU4B(JSON1: Dict, JSON2: Dict) -> Dict:
 #--------------------------------------------------------------------------------------------------------------#
 
 def getU4B(bCfg: Dict, lastdate: str):
+    """
+    Function to retrieve WSPR records, match 2 records, create data structure and then upload to APRS-IS or SondeHub
+
+    : param bCfg: dict, last_date: string (YYYY-MM-DD HH:MM:SS)
+    : return: integer, dict, string
+    """
     # CFG values used in function
     wCallsign = bCfg['wsprcallsign']
     BalloonCallsign = bCfg['ballooncallsign']
@@ -261,7 +253,9 @@ def getU4B(bCfg: Dict, lastdate: str):
 
     # remove any duplicate first packets
     print(40*"-")
-    jWsprData = deldupU4B(jWsprData)
+    logging.debug(f" starting record count = {len(jWsprData)}")
+    jWsprData = deldupWspr(jWsprData)
+    logging.debug(f" ending record count after removing duplicates = {len(jWsprData)}")
     pprint.pp(jWsprData[0], indent=2)
     print(" ")
     pprint.pp(jWsprData[len(jWsprData)-1], indent=2)

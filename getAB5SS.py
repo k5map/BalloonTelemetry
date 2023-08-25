@@ -23,7 +23,7 @@
 #
 # if not already installled, use pip to install the following
 #
-#    pip install ???
+#    pip install urllib3
 #
 #==============================================================================================================#
 #  Resources
@@ -79,7 +79,6 @@ def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
                 logging.debug(f" Found 1st record to process but no match = {jWSPRRec1[i]['tx_sign']}, {jWSPRRec1[i]['time']}, {jWSPRRec1[i]['tx_loc']}, {jWSPRRec1[i]['band']}")
 
     return aMatch
-
 
 #--------------------------------------------------------------------------------------------------------------#
 # Convert callsign of packet #2 into telemetry data
@@ -185,7 +184,6 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
     #print(TelemetryData)
 
     return TelemetryData
-
 
 #--------------------------------------------------------------------------------------------------------------#
 # Convert data to callsign of 2nd packet
