@@ -34,9 +34,6 @@ import logging
 import traceback
 import urllib.request, urllib.error
 import json
-#import time
-#import datetime
-#import math
 import csv
 from socket import *
 from typing import Dict, List
@@ -49,6 +46,12 @@ from constants import __version__, SOFTWARE_NAME
 #--------------------------------------------------------------------------------------------------------------#
 
 def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
+    """
+    Determine if 1st record has a matching 2nd record
+
+    : param jWSPRRec1: list, jWSPRRec2: list
+    : return: list
+    """
     # determine if 2nd record avilable to process
     logging.info(f" Starting record matching process")
 
@@ -65,7 +68,6 @@ def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
             sDateTime = adjDateTime(jWSPRRec1[i]['time'])           # find 2nd record time based on 1st record
             match = False
             for j, element in enumerate(jWSPRRec2):
-            #for j in range(len(jWSPRRec2)):
                 if element['time'] == sDateTime:
                     match = True
                     break
@@ -81,23 +83,22 @@ def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
     return aMatch
 
 #--------------------------------------------------------------------------------------------------------------#
-# Convert callsign of packet #2 into telemetry data
-#
-#   Grid -  concatenate the grid from the packet (XX99) with the last 2 characters from the 2nd packet callsign
-#
-#   Channel # - first char of callsign is first digit of channel #; 3rd char of callsign is second digit of channel 
-#
-#   Speed - ASCII value for 4th char of callsign from 2nd packet; add to ASCII value of "A"; multiple by 5
-#
-#   Temp - 
-#
-#   Altitude - take power (dBm) from first packet lookup alt1 in table; take power (dBm) from second packet looking
-#              alt2 in table; add both values together to obtain altitude in meters
-#
-#   Sat status -
-#
+
 def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
-    # use both packets to decode telemetry data
+    """
+    Use both packets to decode telemetry data
+
+    : param Packet1: dict, Packet2: dict
+    : return: dict
+    """
+    # Telemetry data
+    #   Grid -  concatenate the grid from the packet (XX99) with the last 2 characters from the 2nd packet callsign
+    #   Channel # - first char of callsign is first digit of channel #; 3rd char of callsign is second digit of channel 
+    #   Speed - ASCII value for 4th char of callsign from 2nd packet; add to ASCII value of "A"; multiple by 5
+    #   Temp - ???
+    #   Altitude - take power (dBm) from first packet & lookup alt1 in table; take power (dBm) from second packet & lookup
+    #              alt2 in table; add both values together to obtain altitude in meters
+    #   Sat status - ???
     PowerTable = {
         0: {'alt1' : 0, 'alt2' : 0},
         3: {'alt1' : 1000, 'alt2' : 60},
@@ -127,7 +128,7 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
     Power1 = Packet1['power']
     Power2 = Packet2['power']
     
-    # maidenhead grid = EL29KO
+    # maidenhead grid
     Grid = sGrid + Callsign2[-2:].lower()
 
     # channel #
@@ -135,10 +136,10 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
     digit2 = int(Callsign2[2])
     Channel = digit1 + digit2
 
-    # speed = 85
+    # speed (??/hr)
     Speed = (ord(Callsign2[3]) - ord("A")) * 5
 
-    # altitude = 13180 (meters)
+    # altitude (meters)
     Altitude = PowerTable[Power1]['alt1'] + PowerTable[Power2]['alt2']
 
     # Sat status
@@ -164,12 +165,12 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
     azimuth, elevation = SunPosition(when, location, True)
     #print(f"azimuth = {azimuth}, elevation = {elevation}")
 
-    logging.debug(f" Telemetry data:  callsign1 = {Packet1['tx_sign']}, callsign2 = {Packet2['tx_sign']}, time = {Packet1['time']}, " +
+    logging.debug(f" Telemetry data:  callsign1 = {Callsign1}, callsign2 = {Callsign2}, time = {Packet1['time']}, " +
                   f"channel = {Channel}, grid = {Grid}, sats = {Sat}, speed = {Speed}, alt(m) = {Altitude}, temp(c) = {Temp}, azimuth = {azimuth}, elevation = {elevation}")
 
     TelemetryData = {
-        "callsign1" : Packet1['tx_sign'],
-        "callsign2" : Packet2['tx_sign'],
+        "callsign1" : Callsign1,
+        "callsign2" : Callsign2,
         "time" : Packet1['time'],
         "channel" : Channel,
         "grid" : Grid,
@@ -180,29 +181,28 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
         "azimuth" : azimuth,
         "elevation" : elevation
     }
-
     #print(TelemetryData)
 
     return TelemetryData
 
 #--------------------------------------------------------------------------------------------------------------#
-# Convert data to callsign of 2nd packet
-#
-# 1st char - take the first digit of channel #, convert to int and add ASCII code for 'zero'; then take result and convert back to char
-#
-# 2nd char
-#       if temp minus (-30) / 5
-# 
-# 3rd char - take remainder of second digit of channel # divided by 10; add ASCII code for 'zero'; convert result back to char
-#
-# 4th char - if speed greater than 129, assign "Z" else
-#       integer of speed / 5 plus ASCII of "A" then convert result back to string      
-#
-# 5th char - take 5th char of Grid square
-#
-# 6th char - take 6th char of Grid square
-#
+
 def convertCallsign(bCfg: Dict) -> str:
+    """
+    Convert data to determine callsign of 2nd packet
+
+    : param bCfg: dict
+    : return callsign: string
+    """
+    # Process to convert data to callsign of 2nd packet
+    #   1st char - take the first digit of channel #, convert to int and add ASCII code for 'zero'; then take result and convert back to char
+    #   2nd char
+    #      if temp minus (-30) / 5
+    #   3rd char - take remainder of second digit of channel # divided by 10; add ASCII code for 'zero'; convert result back to char
+    #   4th char - if speed greater than 129, assign "Z" else
+    #      integer of speed / 5 plus ASCII of "A" then convert result back to string      
+    #   5th char - take 5th char of Grid square
+    #   6th char - take 6th char of Grid square
     gridSquare = "EL29KO"       # !!!!!!!!!!!!!!!!!!!!!!!!
     speed = 89                  # !!!!!!!!!!!!!!!!!!!!!!!!
     temp = 25                   # !!!!!!!!!!!!!!!!!!!!!!!!
@@ -253,14 +253,18 @@ def convertCallsign(bCfg: Dict) -> str:
 #--------------------------------------------------------------------------------------------------------------#
 
 def getAB5SS(bCfg: Dict, last_date: str):
+    """
+    Function to retrieve WSPR records, match 2 records, create data structure and then upload to APRS-IS or SondeHub
+
+    : param bCfg: dict, last_date: string (YYYY-MM-DD HH:MM:SS)
+    : return: integer, dict, string
+    """
     wCallsign = bCfg['wsprcallsign']
     BalloonCallsign = bCfg['ballooncallsign']
-    """
-    Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
-    """
     logging.info("#" + ("-"*130))
     logging.info(" Function AB5SS start" )
 
+    # Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
     query = "SELECT * FROM rx WHERE tx_sign='" + wCallsign + "' AND time > '" + last_date + "' ORDER BY time"
     #query = "SELECT * FROM rx WHERE tx_sign='" + wCallsign + "' AND time > '2022-10-21 00:00:00' AND time < '2022-10-22 00:00:00' ORDER BY time"
 

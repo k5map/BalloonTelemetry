@@ -31,13 +31,17 @@
 import logging
 import traceback
 import requests
-#import pprint
 from typing import Dict, List
-
 
 #--------------------------------------------------------------------------------------------------------------#
 
 def putSondeHub(aSondeData: List) -> int:
+    """
+    Function to build list of json data structure to upload to SondeHub
+
+    : param aSondeData: list
+    : return: integer
+    """
     logging.info("#" + ("-"*130))
     logging.info(" Function putSondeHub start" )
 

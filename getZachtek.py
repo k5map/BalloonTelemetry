@@ -47,8 +47,12 @@ from constants import __version__, SOFTWARE_NAME
 #--------------------------------------------------------------------------------------------------------------#
 
 def matchZachtekRecords(aDateTime: List, index: int) -> int:
-    # determine if 2nd record avilable to process
-    
+    """
+    Determine if 1st record has a matching 2nd record
+
+    : param aDateTime: list, index: integer
+    : return: integer
+    """
     # add 2 minutes to found record datetime0
     sDateTime2 = adjDateTime(aDateTime[index]['time'])
 
@@ -67,7 +71,10 @@ def matchZachtekRecords(aDateTime: List, index: int) -> int:
 
 def getZachtek(wCallsign: str, uCallsign: str, bCallsign: str, timeslot: str, last_date: str, strComment: str) -> Tuple[int, List, str]:
     """
-    Takes a CALLSIGN and gets WSPR spots for that callsign from WSPR Live
+    Function to retrieve WSPR records, create data structure and then upload to APRS-IS or SondeHub
+
+    : param wCallsign: string, uCallsign: string, bCallsign: string, timeslot: string, last_date: string (YYYY-MM-DD HH:MM:SS). strComment: string
+    : return: integer, list, string
     """
     logging.info("#" + ("-"*130))
     logging.info(" Function getZachtek start" )

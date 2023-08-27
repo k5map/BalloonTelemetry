@@ -42,7 +42,6 @@ import logging
 import traceback
 import aprslib
 import datetime
-#import pprint
 import math
 from typing import Dict, List
 
@@ -50,6 +49,12 @@ from miscFunctions import *
 
 
 def putAprsIS(wCallsign: str, jUploadData: List) -> int:
+    """
+    Function to build json data structure to upload to APRS-IS
+
+    : param wCallsign: string, jUploadData: list
+    : return: integer
+    """
     logging.info("#" + ("-"*130))
     logging.info(" Function putAprsIS start" )
 

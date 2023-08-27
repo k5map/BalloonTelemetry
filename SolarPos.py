@@ -14,8 +14,15 @@
 #==============================================================================================================#
 
 import math
+from typing import List, Dict, Tuple
 
-def SunPosition(when, location, refraction):
+def SunPosition(when: Tuple, location: Tuple, refraction: bool) -> Tuple[float, float]:
+    """
+    Function to determine azimuth and elevation of the Sun
+
+    : param when: datetime, location: tuple(lat, lon), refraction: boolean
+    : return: Tuple(azimuth: float, elevation: float)
+    """
     # Extract the passed data
     year, month, day, hour, minute, second, timezone = when
     latitude, longitude = location

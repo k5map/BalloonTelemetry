@@ -30,6 +30,12 @@ from constants import CFG_FILE
 
 
 def getBalloonCfg() -> Dict:
+    """
+    Retrieve parameters from a config file to track a balloon
+
+    : param (none)
+    : return: dict
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("bCallSign", help="Enter Balloon Callsign with SSID")
     args = parser.parse_args()
@@ -42,6 +48,12 @@ def getBalloonCfg() -> Dict:
 #==============================================================================================================#
 
 def checkCfg(bCallsign: str):
+    """
+    Verify each parameter for a balloon has been defined in the config file
+
+    : param bCallsign: string
+    : return: (none)
+    """
     if 'tracker' not in bCallsign.keys():
         logging.error(f" *** Item 'tracker' was NOT found in CFG file" )
         sys.exit( "\n*** Missing CFG item, check log file ***" )
@@ -80,6 +92,12 @@ def checkCfg(bCallsign: str):
 #==============================================================================================================#
 
 def putBalloonCfg(Balloon: str, lDateTime: str):
+    """
+    Update balloon parameters in the config file
+
+    : param Balloon: string, lDateTime: string
+    : return: (none)
+    """
     # save last datetime to ini
     cfgUpdater = ConfigUpdater()
     cfgUpdater.read(CFG_FILE)

@@ -51,6 +51,12 @@ from constants import __version__, SOFTWARE_NAME
 #--------------------------------------------------------------------------------------------------------------#
 
 def matchU4BRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
+    """
+    Determine if 1st record has a matching 2nd record
+
+    : param jWSPRRec1: list, jWSPRRec2: list
+    : return: list
+    """
     # determine if 2nd record avilable to process
     logging.info(f" Starting record matching process")
 
@@ -84,6 +90,12 @@ def matchU4BRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
 #--------------------------------------------------------------------------------------------------------------#
 
 def decodeU4B(JSON1: Dict, JSON2: Dict) -> Dict:
+    """
+    Use both packets to decode telemetry data
+
+    : param JSON1: dict, JSON2: dict
+    : return: dict
+    """
     pow2dec = {0:0,3:1,7:2,10:3,13:4,17:5,20:6,23:7,27:8,30:9,33:10,37:11,40:12,43:13,47:14,50:15,53:16,57:17,60:18}
 
     spot_pos_time = JSON1['time']
