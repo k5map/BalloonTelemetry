@@ -43,12 +43,11 @@ import traceback
 import aprslib
 import datetime
 import math
-from typing import Dict, List
 
 from miscFunctions import *
 
 
-def putAprsIS(wCallsign: str, jUploadData: List) -> int:
+def putAprsIS(wCallsign: str, jUploadData: list[dict]) -> int:
     """
     Function to build json data structure to upload to APRS-IS
 

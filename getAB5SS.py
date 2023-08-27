@@ -36,7 +36,6 @@ import urllib.request, urllib.error
 import json
 import csv
 from socket import *
-from typing import Dict, List
 import pprint
 
 from SolarPos import *
@@ -45,7 +44,7 @@ from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
+def matchAB5SSRecords(jWSPRRec1: list[dict], jWSPRRec2: list[dict]) -> list[dict]:
     """
     Determine if 1st record has a matching 2nd record
 
@@ -84,7 +83,7 @@ def matchAB5SSRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
+def decodeAB5SS(Packet1: dict, Packet2: dict) -> dict:
     """
     Use both packets to decode telemetry data
 
@@ -187,7 +186,7 @@ def decodeAB5SS(Packet1: Dict, Packet2: Dict) -> Dict:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def convertCallsign(bCfg: Dict) -> str:
+def convertCallsign(bCfg: dict) -> str:
     """
     Convert data to determine callsign of 2nd packet
 
@@ -252,7 +251,7 @@ def convertCallsign(bCfg: Dict) -> str:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getAB5SS(bCfg: Dict, last_date: str):
+def getAB5SS(bCfg: dict, last_date: str):
     """
     Function to retrieve WSPR records, match 2 records, create data structure and then upload to APRS-IS or SondeHub
 

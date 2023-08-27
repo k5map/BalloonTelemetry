@@ -24,12 +24,11 @@ import logging
 import argparse
 from configupdater import ConfigUpdater
 import configparser
-from typing import Dict, List
 
 from constants import CFG_FILE
 
 
-def getBalloonCfg() -> Dict:
+def getBalloonCfg() -> dict:
     """
     Retrieve parameters from a config file to track a balloon
 

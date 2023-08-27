@@ -39,8 +39,6 @@ import datetime
 import math
 import re                        #regex
 import maidenhead as mh
-from typing import Dict, List, Tuple
-
 
 #--------------------------------------------------------------------------------------------------------------#
 
@@ -70,7 +68,7 @@ def adjDateTime(sDateTime: str) -> str:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def deldupWspr(spotlist: List) -> List:
+def deldupWspr(spotlist: list[dict]) -> list[dict]:
     """
     Elminate duplicate records based on callsign & time
 
@@ -111,7 +109,7 @@ def deg_to_dms(deg: float, type='lat') -> str:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def GridtoLatLon(grid: str) -> Tuple[float, float]:
+def GridtoLatLon(grid: str) -> tuple[float, float]:
     """
     Convert a 6-char maidenhead grid to latitude, longitude in middle of grid
 

@@ -41,7 +41,6 @@ import urllib.request, urllib.error
 import json
 import csv
 from socket import *
-from typing import Dict, List
 import pprint
 
 from miscFunctions import *
@@ -50,7 +49,7 @@ from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchU4BRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
+def matchU4BRecords(jWSPRRec1: list[dict], jWSPRRec2: list[dict]) -> list[dict]:
     """
     Determine if 1st record has a matching 2nd record
 
@@ -89,7 +88,7 @@ def matchU4BRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def decodeU4B(JSON1: Dict, JSON2: Dict) -> Dict:
+def decodeU4B(JSON1: dict, JSON2: dict) -> dict:
     """
     Use both packets to decode telemetry data
 
@@ -215,7 +214,7 @@ def decodeU4B(JSON1: Dict, JSON2: Dict) -> Dict:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getU4B(bCfg: Dict, lastdate: str):
+def getU4B(bCfg: dict, lastdate: str) -> tuple[int, list[dict], str]:
     """
     Function to retrieve WSPR records, match 2 records, create data structure and then upload to APRS-IS or SondeHub
 

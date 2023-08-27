@@ -36,7 +36,6 @@ import traceback
 import urllib.request, urllib.error
 import json
 from socket import *
-from typing import Dict, List, Tuple
 import pprint
 
 from miscFunctions import *
@@ -44,7 +43,7 @@ from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchQRPRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
+def matchQRPRecords(jWSPRRec1: list[dict], jWSPRRec2: list[dict]) -> list[dict]:
     """
     Determine if 1st record has a matching 2nd record
 
@@ -83,7 +82,7 @@ def matchQRPRecords(jWSPRRec1: List, jWSPRRec2: List) -> List:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def decodeQRP(JSON1: Dict, JSON2: Dict) -> Dict:
+def decodeQRP(JSON1: dict, JSON2: dict) -> dict:
     """
     Use both packets to decode telemetry data
 
@@ -209,7 +208,7 @@ def decodeQRP(JSON1: Dict, JSON2: Dict) -> Dict:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getQRPLabs(bCfg: Dict, lastdate: str):
+def getQRPLabs(bCfg: dict, lastdate: str) -> tuple[int, list[dict], str]:
     """
     Function to retrieve WSPR records, create data structure and then upload to APRS-IS or SondeHub
 

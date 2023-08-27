@@ -31,11 +31,10 @@
 import logging
 import traceback
 import requests
-from typing import Dict, List
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def putSondeHub(aSondeData: List) -> int:
+def putSondeHub(aSondeData: list[dict]) -> int:
     """
     Function to build list of json data structure to upload to SondeHub
 

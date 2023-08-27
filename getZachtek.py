@@ -38,7 +38,6 @@ import json
 #import time
 #import datetime
 from socket import *
-from typing import Dict, List, Tuple
 import pprint
 
 from miscFunctions import *
@@ -46,7 +45,7 @@ from constants import __version__, SOFTWARE_NAME
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def matchZachtekRecords(aDateTime: List, index: int) -> int:
+def matchZachtekRecords(aDateTime: list[dict], index: int) -> int:
     """
     Determine if 1st record has a matching 2nd record
 
@@ -69,7 +68,7 @@ def matchZachtekRecords(aDateTime: List, index: int) -> int:
 
 #--------------------------------------------------------------------------------------------------------------#
 
-def getZachtek(wCallsign: str, uCallsign: str, bCallsign: str, timeslot: str, last_date: str, strComment: str) -> Tuple[int, List, str]:
+def getZachtek(wCallsign: str, uCallsign: str, bCallsign: str, timeslot: str, last_date: str, strComment: str) -> tuple[int, list[dict], str]:
     """
     Function to retrieve WSPR records, create data structure and then upload to APRS-IS or SondeHub
 
