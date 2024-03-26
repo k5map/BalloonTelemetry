@@ -29,6 +29,7 @@
 #  Resources
 #       https://github.com/sm3ulc/hab-wspr  --  Special thanks to David SM3ULC for his encode/decode routines
 #       https://github.com/traquito/traquito.github.io
+#       https://github.com/traquito/traquito.github.io/blob/main/js/WSPREncoded.js 
 #       http://qrp-labs.com/flights/s4#protocol  --  details about telemetry protocol
 #==============================================================================================================#
 #

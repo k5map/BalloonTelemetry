@@ -13,10 +13,6 @@
 #    pip install pprint
 #
 #==============================================================================================================#
-#
-#  2023 07-20 - 
-#
-#==============================================================================================================#
 #  Resources
 #       logging - https://www.youtube.com/watch?v=KSQ4KxCtsf8 
 #       aprslib - https://aprs-python.readthedocs.io/en/stable/
@@ -31,11 +27,11 @@
 
 import sys
 import logging
-import string
-import datetime
-import time
-import calendar
-import json
+#import string
+#import datetime
+#import time
+#import calendar
+#import json
 import pprint
 
 from BalloonCfg import *
@@ -47,7 +43,6 @@ from putSondeHub import *
 from putAprsIS import *
 from miscFunctions import *
 from constants import __version__
-
 
 #------------------------ starts here -----------------------------#
 BalloonCfg = getBalloonCfg()
