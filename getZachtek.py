@@ -148,7 +148,7 @@ def getZachtek(wCallsign: str, uCallsign: str, bCallsign: str, timeslot: str, la
         # reference https://www.zachtek.com/post/a-new-wspr-transmitter-for-balloons -- table near the bottom
         # reference https://github.com/HarrydeBug/WSPR-transmitters/blob/master/Standard%20Firmware/Release/Hardware_Version_2_ESP8285/WSPR-TX2.05/WSPR-TX2.05.ino line 1430
         pwr1 = int(jWsprData[x]['power']) * 300
-        pwr2 = int(jWsprData[y]['power']) * 300
+        pwr2 = int(jWsprData[y]['power']) * 20
         #altitude = (int(jWsprData[x]['power']) + int(jWsprData[y]['power'])) * 300
         altitude = pwr1 + pwr2
         logging.debug(f" alt1/power = {jWsprData[x]['power']}, alt2/power = {jWsprData[y]['power']}, altitude = {altitude}m")
